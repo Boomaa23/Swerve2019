@@ -18,12 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.robot;
+package org.rivierarobotics.util;
 
-public class RobotConstants {
-    public interface Joysticks {
-        int LEFT_JS = 0;
-        int RIGHT_JS = 1;
-        int BUTTONS = 4;
+public class MathUtil {
+    private static final double DEADBAND = 0.1;
+
+    public static double fitDeadband(double val) {
+        if (!(Math.abs(val) < DEADBAND)) {
+            if (val > 0) {
+                if (val >= 1) {
+                    return 1;
+                } else {
+                    return val - DEADBAND;
+                }
+            } else if (val < 0) {
+                if (val <= -1) {
+                    return -1;
+                } else {
+                    return val + DEADBAND;
+                }
+            }
+        }
+        return 0;
     }
 }

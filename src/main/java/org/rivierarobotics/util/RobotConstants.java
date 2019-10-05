@@ -18,33 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.util;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel;
-import org.rivierarobotics.util.RobotConstants;
-
-import java.util.Arrays;
-import java.util.List;
-
-public class SwerveModule {
-    private final CANSparkMax steer;
-    private final CANSparkMax drive;
-
-    public SwerveModule(RobotConstants.MotorGroups groupId) {
-        this.drive = new CANSparkMax(groupId.driveCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
-        this.steer = new CANSparkMax(groupId.steerCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
+public class RobotConstants {
+    public interface CANDevices {
+        int GYRO = 8;
     }
 
-    public List<CANSparkMax> getModuleMotors() {
-        return Arrays.asList(drive, steer);
+    public interface Joysticks {
+        int LEFT_JS = 0;
+        int RIGHT_JS = 1;
+        int BUTTONS = 4;
     }
 
-    public CANSparkMax getDrive() {
-        return drive;
-    }
+    public enum MotorGroups {
+        FL(0, 1),
+        FR(2, 3),
+        BL(4, 5),
+        BR(6, 7);
 
-    public CANSparkMax getSteer() {
-        return steer;
+        public final int steerCANId;
+        public final int driveCANId;
+
+        private MotorGroups(int steerCANId, int driveCANId) {
+            this.steerCANId = steerCANId;
+            this.driveCANId = driveCANId;
+        }
     }
 }

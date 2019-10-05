@@ -20,10 +20,23 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.rivierarobotics.commands.SwerveControl;
+import org.rivierarobotics.util.RobotConstants;
 
 public class DriveTrain extends Subsystem {
+    private final SwerveModule fl, fr, bl, br;
+    private final PigeonIMU gyro;
+
+    public DriveTrain() {
+        this.fl = new SwerveModule(RobotConstants.MotorGroups.FL);
+        this.fr = new SwerveModule(RobotConstants.MotorGroups.FR);
+        this.bl = new SwerveModule(RobotConstants.MotorGroups.BL);
+        this.br = new SwerveModule(RobotConstants.MotorGroups.BR);
+        this.gyro = new PigeonIMU(RobotConstants.CANDevices.GYRO);
+    }
+
     @Override
     protected void initDefaultCommand() {
         setDefaultCommand(new SwerveControl());

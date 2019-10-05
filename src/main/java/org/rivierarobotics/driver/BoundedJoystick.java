@@ -18,19 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.driver;
 
-public enum MotorGroup {
-    FL(0, 1),
-    FR(2, 3),
-    BL(4, 5),
-    BR(6, 7);
+import edu.wpi.first.wpilibj.Joystick;
+import org.rivierarobotics.util.MathUtil;
 
-    public final int steerCanId;
-    public final int driveCanId;
+import java.util.HashMap;
+import java.util.Map;
 
-    private MotorGroup(int steerCanId, int driveCanId) {
-        this.steerCanId = steerCanId;
-        this.driveCanId = driveCanId;
+public class BoundedJoystick extends Joystick {
+    public BoundedJoystick(int port) {
+        super(port);
+    }
+
+    public double getDimension(char dim) {
+        return getXYZMap().get(dim);
+    }
+
+    public Map<Character, Double> getXYZMap() {
+        Map<Character, Double> xyz = new HashMap<Character, Double>();
+        xyz.put('X', MathUtil.fitDeadband(super.getX()));
+        xyz.put('Y', MathUtil.fitDeadband(super.getY()));
+        xyz.put('Z', MathUtil.fitDeadband(super.getTwist()));
+        return xyz;
     }
 }

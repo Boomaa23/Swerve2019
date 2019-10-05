@@ -21,9 +21,19 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import org.rivierarobotics.driver.Driver;
+import org.rivierarobotics.subsystems.DriveTrain;
 
 public class Robot extends TimedRobot {
+    public static Robot runningRobot;
+    public DriveTrain driveTrain;
+    public Driver driver;
+
     public Robot() {
+        this.driveTrain = new DriveTrain();
+        this.driver = new Driver();
+        runningRobot = this;
     }
 
     @Override
@@ -36,6 +46,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
+        Scheduler.getInstance().run();
+        printShuffleboard();
     }
 
     @Override
@@ -44,9 +56,16 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+        Scheduler.getInstance().run();
+        printShuffleboard();
     }
 
     @Override
     public void disabledPeriodic() {
+        printShuffleboard();
+    }
+
+    private void printShuffleboard() {
+        //put log outputs here if needed
     }
 }
