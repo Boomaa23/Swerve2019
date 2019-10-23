@@ -41,4 +41,14 @@ public class MathUtil {
         }
         return 0;
     }
+
+    public static double limit(double value, double max) {
+        if (value > max) {
+            return max;
+        } else if (value < -max) {
+            return -max;
+        } else {
+            return value;
+        }
+    }
 }

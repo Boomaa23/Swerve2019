@@ -27,8 +27,8 @@ import org.rivierarobotics.subsystems.DriveTrain;
 
 public class Robot extends TimedRobot {
     public static Robot runningRobot;
-    public DriveTrain driveTrain;
-    public Driver driver;
+    public static DriveTrain driveTrain;
+    public static Driver driver;
 
     public Robot() {
         this.driveTrain = new DriveTrain();

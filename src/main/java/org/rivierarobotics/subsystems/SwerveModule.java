@@ -22,6 +22,7 @@ package org.rivierarobotics.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.RobotConstants;
 
 import java.util.Arrays;
@@ -31,9 +32,17 @@ public class SwerveModule {
     private final CANSparkMax steer;
     private final CANSparkMax drive;
 
-    public SwerveModule(RobotConstants.MotorGroups groupId) {
+    public SwerveModule(RobotConstants.MotorGroup groupId) {
         this.drive = new CANSparkMax(groupId.driveCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.steer = new CANSparkMax(groupId.steerCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
+    }
+
+    public void setDrivePower(double pwr) {
+        drive.set(pwr);
+    }
+
+    public void setWheelAngle(double angle) {
+
     }
 
     public List<CANSparkMax> getModuleMotors() {

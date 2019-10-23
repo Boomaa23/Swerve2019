@@ -21,20 +21,56 @@
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.rivierarobotics.commands.SwerveControl;
 import org.rivierarobotics.util.RobotConstants;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DriveTrain extends Subsystem {
-    private final SwerveModule fl, fr, bl, br;
+    private final SwerveModule fr, fl, bl, br;
+    private final SwerveModule[] allModules;
     private final PigeonIMU gyro;
 
     public DriveTrain() {
-        this.fl = new SwerveModule(RobotConstants.MotorGroups.FL);
-        this.fr = new SwerveModule(RobotConstants.MotorGroups.FR);
-        this.bl = new SwerveModule(RobotConstants.MotorGroups.BL);
-        this.br = new SwerveModule(RobotConstants.MotorGroups.BR);
+        this.fr = new SwerveModule(RobotConstants.MotorGroup.FR);
+        this.fl = new SwerveModule(RobotConstants.MotorGroup.FL);
+        this.bl = new SwerveModule(RobotConstants.MotorGroup.BL);
+        this.br = new SwerveModule(RobotConstants.MotorGroup.BR);
         this.gyro = new PigeonIMU(RobotConstants.CANDevices.GYRO);
+        this.allModules = new SwerveModule[]{fr, fl, bl, br};
+    }
+
+    public void setPower(double... ordered_pwrs) {
+        for(int i = 0;i < ordered_pwrs.length;i++) {
+            allModules[i].setDrivePower(ordered_pwrs[i]);
+        }
+    }
+
+    public void setAngle(double... ordered_angles) {
+        for(int i = 0;i < ordered_angles.length;i++) {
+            allModules[i].setWheelAngle(ordered_angles[i]);
+        }
+    }
+
+    public double getRobotAngle() {
+        double[] ypr = new double[3];
+        gyro.getYawPitchRoll(ypr);
+        return ypr[0];
+    }
+
+    public double[] getDistances() { return getTicks(true, fr, fl, bl, br); }
+    public double[] getAngles() { return getTicks(true, fr, fl, bl, br); }
+
+    private double[] getTicks(boolean isDistance, SwerveModule... modules) {
+        List<Double> ticks = new ArrayList<>();
+        for(SwerveModule module : modules) {
+            CANSparkMax controller = !isDistance ? module.getSteer() : module.getDrive();
+            ticks.add(controller.getEncoder().getPosition());
+        }
+        return ticks.stream().mapToDouble(Double::doubleValue).toArray();
     }
 
     @Override

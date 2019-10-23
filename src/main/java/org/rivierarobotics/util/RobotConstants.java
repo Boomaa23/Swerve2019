@@ -31,18 +31,23 @@ public class RobotConstants {
         int BUTTONS = 4;
     }
 
-    public enum MotorGroups {
-        FL(0, 1),
+    public enum MotorGroup {
         FR(2, 3),
+        FL(0, 1),
         BL(4, 5),
         BR(6, 7);
 
         public final int steerCANId;
         public final int driveCANId;
 
-        private MotorGroups(int steerCANId, int driveCANId) {
+        private MotorGroup(int steerCANId, int driveCANId) {
             this.steerCANId = steerCANId;
             this.driveCANId = driveCANId;
         }
+    }
+
+    public interface Dimensions {
+        int WHEELBASE = 0;
+        int TRACKWIDTH = 0;
     }
 }
