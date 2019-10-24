@@ -62,7 +62,7 @@ public class DriveTrain extends Subsystem {
     }
 
     public double[] getDistances() { return getTicks(true, fr, fl, bl, br); }
-    public double[] getAngles() { return getTicks(true, fr, fl, bl, br); }
+    public double[] getAngles() { return getTicks(false, fr, fl, bl, br); }
 
     private double[] getTicks(boolean isDistance, SwerveModule... modules) {
         List<Double> ticks = new ArrayList<>();

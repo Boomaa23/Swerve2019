@@ -22,12 +22,14 @@ package org.rivierarobotics.driver;
 
 import org.rivierarobotics.util.RobotConstants;
 
-public class Driver {
+public class Controller {
     public final BoundedJoystick left, right, buttons;
+    public final CompositeJoystick composite;
 
-    public Driver() {
+    public Controller() {
         this.left = new BoundedJoystick(RobotConstants.Joysticks.LEFT_JS);
         this.right = new BoundedJoystick(RobotConstants.Joysticks.RIGHT_JS);
         this.buttons = new BoundedJoystick(RobotConstants.Joysticks.BUTTONS);
+        this.composite = new CompositeJoystick(left, right, left);
     }
 }

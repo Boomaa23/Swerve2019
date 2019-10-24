@@ -22,6 +22,8 @@ package org.rivierarobotics.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import edu.wpi.first.wpilibj.PIDController;
+import org.rivierarobotics.util.AbstractPIDSource;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.RobotConstants;
 
@@ -29,12 +31,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SwerveModule {
+    private static final double P = 0, I = 0, D = 0, F = 0;
     private final CANSparkMax steer;
     private final CANSparkMax drive;
+    private final PIDController pidLoop;
 
     public SwerveModule(RobotConstants.MotorGroup groupId) {
         this.drive = new CANSparkMax(groupId.driveCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.steer = new CANSparkMax(groupId.steerCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
+        pidLoop = new PIDController(P, I, D, F, new AbstractPIDSource(this::getTurnAngle), this::setDrivePower, 0.01);
     }
 
     public void setDrivePower(double pwr) {
@@ -42,7 +47,11 @@ public class SwerveModule {
     }
 
     public void setWheelAngle(double angle) {
+        pidLoop.setSetpoint(angle);
+    }
 
+    public double getTurnAngle() {
+        return steer.getEncoder().getPosition();
     }
 
     public List<CANSparkMax> getModuleMotors() {

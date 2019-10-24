@@ -28,7 +28,7 @@ public class RobotConstants {
     public interface Joysticks {
         int LEFT_JS = 0;
         int RIGHT_JS = 1;
-        int BUTTONS = 4;
+        int BUTTONS = 2;
     }
 
     public enum MotorGroup {

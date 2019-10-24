@@ -22,17 +22,17 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import org.rivierarobotics.driver.Driver;
+import org.rivierarobotics.driver.Controller;
 import org.rivierarobotics.subsystems.DriveTrain;
 
 public class Robot extends TimedRobot {
     public static Robot runningRobot;
     public static DriveTrain driveTrain;
-    public static Driver driver;
+    public static Controller controller;
 
     public Robot() {
         this.driveTrain = new DriveTrain();
-        this.driver = new Driver();
+        this.controller = new Controller();
         runningRobot = this;
     }
 
