@@ -51,4 +51,8 @@ public class MathUtil {
             return value;
         }
     }
+
+    public static double wrapRadians(double radians) {
+        return (360 / (2 * Math.PI)) * radians;
+    }
 }

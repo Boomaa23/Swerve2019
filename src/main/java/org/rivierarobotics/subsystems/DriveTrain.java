@@ -43,6 +43,10 @@ public class DriveTrain extends Subsystem {
         this.allModules = new SwerveModule[]{fr, fl, bl, br};
     }
 
+    public void setDriveDistanceAll(double setpoint) {
+        for(SwerveModule module : allModules) { module.setDriveDistance(setpoint); }
+    }
+
     public void setPower(double... ordered_pwrs) {
         for(int i = 0;i < ordered_pwrs.length;i++) {
             allModules[i].setDrivePower(ordered_pwrs[i]);
@@ -53,6 +57,14 @@ public class DriveTrain extends Subsystem {
         for(int i = 0;i < ordered_angles.length;i++) {
             allModules[i].setWheelAngle(ordered_angles[i]);
         }
+    }
+
+    public void setPowerAll(double pwr) {
+        for(SwerveModule module : allModules) { module.setDrivePower(pwr); }
+    }
+
+    public void setWheelAngleAll(double pwr) {
+        for(SwerveModule module : allModules) { module.setWheelAngle(pwr); }
     }
 
     public double getRobotAngle() {

@@ -1,14 +1,13 @@
-package org.rivierarobotics.util;
+package org.rivierarobotics.lib;
 
 import org.rivierarobotics.driver.CompositeJoystick;
-import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.util.RobotConstants;
 import org.rivierarobotics.util.RobotConstants.Dimensions;
 
-public class SwerveUtil {
+public class SwerveLib {
     private static double A = 0, B = 0, C = 0, D = 0;
 
-    public static void swerveControl(double robotAngle) {
-        CompositeJoystick composite = Robot.controller.composite;
+    public static void swerveControl(double robotAngle, CompositeJoystick composite) {
         double FWD = composite.getY() * Math.cos(robotAngle) + composite.getX() * Math.sin(robotAngle);
         double STR = composite.getY() * Math.sin(robotAngle) + composite.getX() * Math.cos(robotAngle);
         double R = Math.sqrt(Math.pow(Dimensions.WHEELBASE, 2) / Math.pow(Dimensions.TRACKWIDTH, 2));
