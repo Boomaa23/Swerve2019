@@ -1,10 +1,9 @@
-package org.rivierarobotics.lib;
+package org.rivierarobotics.util;
 
 import org.rivierarobotics.driver.CompositeJoystick;
-import org.rivierarobotics.util.RobotConstants;
-import org.rivierarobotics.util.RobotConstants.Dimensions;
+import org.rivierarobotics.util.RobotMap.Dimensions;
 
-public class SwerveLib {
+public class SwerveUtil {
     private static double A = 0, B = 0, C = 0, D = 0;
 
     public static void swerveControl(double robotAngle, CompositeJoystick composite) {
@@ -17,17 +16,17 @@ public class SwerveLib {
         D = FWD + composite.getZ() * (Dimensions.WHEELBASE / R);
     }
 
-    public static double calcWheelSpeed(RobotConstants.MotorGroup group) {
+    public static double calcWheelSpeed(RobotMap.MotorGroup group) {
         double[] calcIndexes = getCalcIndexes(group);
         return Math.sqrt(Math.pow(calcIndexes[0], 2) + Math.pow(calcIndexes[1], 2));
     }
 
-    public static double calcWheelAngle(RobotConstants.MotorGroup group) {
+    public static double calcWheelAngle(RobotMap.MotorGroup group) {
         double[] calcIndexes = getCalcIndexes(group);
         return Math.toDegrees(Math.atan2(calcIndexes[0], calcIndexes[1]));
     }
 
-    private static double[] getCalcIndexes(RobotConstants.MotorGroup group) {
+    private static double[] getCalcIndexes(RobotMap.MotorGroup group) {
         double calcIndexes[];
         switch(group) {
             case FR: calcIndexes = new double[]{B, C}; break;

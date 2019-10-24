@@ -20,7 +20,7 @@
 
 package org.rivierarobotics.util;
 
-public class RobotConstants {
+public class RobotMap {
     public interface CANDevices {
         int GYRO = 8;
     }
@@ -28,26 +28,25 @@ public class RobotConstants {
     public interface Joysticks {
         int LEFT_JS = 0;
         int RIGHT_JS = 1;
-        int BUTTONS = 2;
+        int BUTTONS = 4;
     }
 
     public enum MotorGroup {
-        FR(2, 3),
-        FL(0, 1),
+        FR(0, 1),
+        FL(2, 3),
         BL(4, 5),
         BR(6, 7);
 
-        public final int steerCANId;
-        public final int driveCANId;
+        public final int steerCANId, driveCANId;
 
-        private MotorGroup(int steerCANId, int driveCANId) {
+        MotorGroup(int steerCANId, int driveCANId) {
             this.steerCANId = steerCANId;
             this.driveCANId = driveCANId;
         }
     }
 
     public interface Dimensions {
-        int WHEELBASE = 0;
-        int TRACKWIDTH = 0;
+        int WHEELBASE = 1;
+        int TRACKWIDTH = 1;
     }
 }

@@ -23,23 +23,23 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.RobotConstants.MotorGroup;
-import org.rivierarobotics.lib.SwerveLib;
+import org.rivierarobotics.util.RobotMap.MotorGroup;
+import org.rivierarobotics.util.SwerveUtil;
 
-import static org.rivierarobotics.lib.SwerveLib.calcWheelAngle;
-import static org.rivierarobotics.lib.SwerveLib.calcWheelSpeed;
+import static org.rivierarobotics.util.SwerveUtil.calcWheelAngle;
+import static org.rivierarobotics.util.SwerveUtil.calcWheelSpeed;
 
 public class SwerveControl extends Command {
     private DriveTrain driveTrain;
 
     public SwerveControl() {
-        this.driveTrain = Robot.driveTrain;
+        this.driveTrain = Robot.runningRobot.driveTrain;
         requires(driveTrain);
     }
 
     @Override
     protected void execute() {
-        SwerveLib.swerveControl(driveTrain.getRobotAngle(), Robot.controller.composite);
+        SwerveUtil.swerveControl(driveTrain.getGyroAngle(), Robot.runningRobot.controller.composite);
 
         driveTrain.setPower(calcWheelSpeed(MotorGroup.FR), calcWheelSpeed(MotorGroup.FL),
                 calcWheelSpeed(MotorGroup.BL), calcWheelSpeed(MotorGroup.BR));

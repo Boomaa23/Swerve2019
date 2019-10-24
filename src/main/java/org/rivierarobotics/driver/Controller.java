@@ -20,16 +20,16 @@
 
 package org.rivierarobotics.driver;
 
-import org.rivierarobotics.util.RobotConstants;
+import org.rivierarobotics.util.RobotMap;
 
 public class Controller {
     public final BoundedJoystick left, right, buttons;
     public final CompositeJoystick composite;
 
     public Controller() {
-        this.left = new BoundedJoystick(RobotConstants.Joysticks.LEFT_JS);
-        this.right = new BoundedJoystick(RobotConstants.Joysticks.RIGHT_JS);
-        this.buttons = new BoundedJoystick(RobotConstants.Joysticks.BUTTONS);
+        this.left = new BoundedJoystick(RobotMap.Joysticks.LEFT_JS);
+        this.right = new BoundedJoystick(RobotMap.Joysticks.RIGHT_JS);
+        this.buttons = new BoundedJoystick(RobotMap.Joysticks.BUTTONS);
         this.composite = new CompositeJoystick(left, right, left);
     }
 }

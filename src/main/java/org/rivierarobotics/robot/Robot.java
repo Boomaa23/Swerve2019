@@ -22,13 +22,15 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.driver.Controller;
 import org.rivierarobotics.subsystems.DriveTrain;
 
 public class Robot extends TimedRobot {
     public static Robot runningRobot;
-    public static DriveTrain driveTrain;
-    public static Controller controller;
+    public DriveTrain driveTrain;
+    public Controller controller;
 
     public Robot() {
         this.driveTrain = new DriveTrain();
@@ -62,10 +64,16 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
+        driveTrain.stop();
         printShuffleboard();
     }
 
     private void printShuffleboard() {
-        //put log outputs here if needed
+        SmartDashboard.putNumberArray("Drive Distances", this.driveTrain.getDistances());
+        SmartDashboard.putNumberArray("Wheel Angles", this.driveTrain.getAngles());
+        SmartDashboard.putNumberArray("Drive Powers", this.driveTrain.getAllPowers(true));
+        SmartDashboard.putNumberArray("Steering Powers", this.driveTrain.getAllPowers(false));
+        SmartDashboard.putNumberArray("Drive Encoder Ticks", this.driveTrain.getDistances());
+        SmartDashboard.putNumberArray("Steering Encoder Ticks", this.driveTrain.getAngles());
     }
 }

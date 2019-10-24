@@ -1,6 +1,4 @@
-package org.rivierarobotics.lib;
-
-import org.rivierarobotics.util.MathUtil;
+package org.rivierarobotics.util;
 
 public class Vector2D {
     private double x, y;
