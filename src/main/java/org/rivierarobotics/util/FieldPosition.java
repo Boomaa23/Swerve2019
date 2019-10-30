@@ -18,36 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.driver;
+package org.rivierarobotics.util;
 
-import edu.wpi.first.wpilibj.Joystick;
+public enum FieldPosition {
+    MID(0, 0, 0),
+    END(0, 0, 0);
 
-public class CompositeJoystick {
-    private BoundedJoystick x, y, z;
+    public double endRotation;
+    public Vector2D vector;
 
-    public CompositeJoystick(BoundedJoystick x, BoundedJoystick y, BoundedJoystick z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    public CompositeJoystick(Joystick x, Joystick y, Joystick z) {
-        this.x = (BoundedJoystick) x;
-        this.y = (BoundedJoystick) y;
-        this.z = (BoundedJoystick) z;
-    }
-
-    public CompositeJoystick() {}
-
-    public double getX() {
-        return x.getDimension('X');
-    }
-
-    public double getY() {
-        return y.getDimension('Y');
-    }
-
-    public double getZ() {
-        return z.getDimension('Z');
+    FieldPosition(double x ,double y, double endRotation) {
+        this.vector = new Vector2D(x, y);
+        this.endRotation = endRotation;
     }
 }

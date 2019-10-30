@@ -52,6 +52,10 @@ public class MathUtil {
         }
     }
 
+    public static double fitToCircle(double angle) {
+        return angle < 0 ? (360 - Math.abs(angle)) % 360 : angle % 360;
+    }
+
     public static double wrapRadians(double radians) {
         return (360 / (2 * Math.PI)) * radians;
     }

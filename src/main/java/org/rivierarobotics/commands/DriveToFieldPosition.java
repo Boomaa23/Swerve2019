@@ -18,36 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.driver;
+package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.TimedCommand;
+import org.rivierarobotics.util.FieldPosition;
 
-public class CompositeJoystick {
-    private BoundedJoystick x, y, z;
-
-    public CompositeJoystick(BoundedJoystick x, BoundedJoystick y, BoundedJoystick z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    public CompositeJoystick(Joystick x, Joystick y, Joystick z) {
-        this.x = (BoundedJoystick) x;
-        this.y = (BoundedJoystick) y;
-        this.z = (BoundedJoystick) z;
-    }
-
-    public CompositeJoystick() {}
-
-    public double getX() {
-        return x.getDimension('X');
-    }
-
-    public double getY() {
-        return y.getDimension('Y');
-    }
-
-    public double getZ() {
-        return z.getDimension('Z');
+public class DriveToFieldPosition extends CommandGroup {
+    public DriveToFieldPosition(FieldPosition position) {
+        addSequential(new DriveVector(position));
+        addSequential(new TimedCommand(0.05));
+        addSequential(new Rotate(position));
     }
 }

@@ -24,6 +24,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.rivierarobotics.commands.SwerveControl;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.RobotMap;
 
 import java.security.InvalidParameterException;
@@ -64,8 +65,8 @@ public class DriveTrain extends Subsystem {
         for(SwerveModule module : allModules) { module.setDriveDistance(setpoint); }
     }
 
-    public void setAllSteerAngle(double pwr) {
-        for(SwerveModule module : allModules) { module.setSteerAngle(pwr); }
+    public void setAllSteerAngle(double angle) {
+        for(SwerveModule module : allModules) { module.setSteerAngle(angle); }
     }
 
     public double[] getAllPowers(boolean isDrive) {
@@ -78,7 +79,11 @@ public class DriveTrain extends Subsystem {
     public double getGyroAngle() {
         double[] ypr = new double[3];
         gyro.getYawPitchRoll(ypr);
-        return ypr[0];
+        return MathUtil.fitToCircle(ypr[0]);
+    }
+
+    public void resetGyro() {
+        gyro.setYaw(0);
     }
 
     public double[] getDistances() {

@@ -30,7 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SwerveModule {
-    private static final double TICKS_TO_INCHES = 0;
+    public static final double TICKS_TO_INCHES = 0;
+    public static final double ANGLE_SCALE = 4096 / 360;
     private static final double d_kP = 0, d_kI = 0, d_kD = 0, d_kF = 0;
     private static final double s_kP = 0, s_kI = 0, s_kD = 0, s_kF = 0;
     private final CANSparkMax steer;
@@ -41,8 +42,10 @@ public class SwerveModule {
     public SwerveModule(RobotMap.MotorGroup groupId) {
         this.drive = new CANSparkMax(groupId.driveCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.steer = new CANSparkMax(groupId.steerCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
-        this.drivePID = new PIDController(d_kP, d_kI, d_kD, d_kF, new AbstractPIDSource(this::getSteerAngle), this::setRawDrivePower, 0.01);
-        this.steerPID = new PIDController(s_kP, s_kI, s_kD, s_kF, new AbstractPIDSource(this::getDriveDistance), this::setRawSteerPower, 0.01);
+        this.drivePID = new PIDController(d_kP, d_kI, d_kD, d_kF,
+                new AbstractPIDSource(this::getSteerAngle), this::setRawDrivePower, 0.01);
+        this.steerPID = new PIDController(s_kP, s_kI, s_kD, s_kF,
+                new AbstractPIDSource(this::getDriveDistance), this::setRawSteerPower, 0.01);
     }
 
     public void setDrivePower(double pwr) {
@@ -64,7 +67,7 @@ public class SwerveModule {
     }
 
     public void setSteerAngle(double angle) {
-        steerPID.setSetpoint(angle);
+        steerPID.setSetpoint(angle * ANGLE_SCALE);
         drivePID.enable();
     }
 

@@ -20,33 +20,47 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.Command;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.FieldPosition;
-import org.rivierarobotics.util.Vector2D;
+import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.RobotMap;
 
-public class DriveVector extends InstantCommand {
+public class Rotate extends Command {
     private final DriveTrain driveTrain = Robot.runningRobot.driveTrain;
-    private final double distance, angle;
+    private final double targetAngle;
+    private double pwr = 0.25;
 
-    public DriveVector(double distance, double angle) {
-        this.distance = distance;
-        this.angle = angle;
+    public Rotate(FieldPosition position) {
+        this(position.endRotation);
+    }
+
+    public Rotate(double targetAngle) {
+        this.targetAngle = MathUtil.fitToCircle(targetAngle);
         requires(driveTrain);
     }
 
-    public DriveVector(Vector2D vector) {
-        this(vector.getMagnitude(), vector.getAngle());
-    }
-
-    public DriveVector(FieldPosition position) {
-        this(position.vector);
+    @Override
+    protected void initialize() {
+        double wheelAngle = Math.atan(RobotMap.Dimensions.TRACKWIDTH / RobotMap.Dimensions.WHEELBASE);
+        driveTrain.setAngle(wheelAngle, -wheelAngle, wheelAngle, -wheelAngle);
+        double currentAngle = driveTrain.getGyroAngle();
+        pwr = (targetAngle - currentAngle) > (currentAngle + (360 - targetAngle)) ? pwr * -1 : pwr;
     }
 
     @Override
     protected void execute() {
-        driveTrain.setAllSteerAngle(angle);
-        driveTrain.setAllDriveDistance(distance);
+        driveTrain.setAllDrivePower(pwr);
+    }
+
+    @Override
+    protected void end() {
+        driveTrain.setAllDrivePower(0.0);
+    }
+
+    @Override
+    protected boolean isFinished() {
+        return Math.abs(driveTrain.getGyroAngle() - targetAngle) <= 5;
     }
 }
