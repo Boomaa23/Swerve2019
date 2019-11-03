@@ -23,13 +23,15 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import org.rivierarobotics.commands.SwerveControl;
+import org.rivierarobotics.commands.DriveControl;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.RobotMap;
+import org.rivierarobotics.util.DriveUtil;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DriveTrain extends Subsystem {
     private final SwerveModule fr, fl, bl, br;
@@ -45,28 +47,56 @@ public class DriveTrain extends Subsystem {
         this.allModules = new SwerveModule[]{fr, fl, bl, br};
     }
 
-    public void setPower(double... ordered_pwrs) {
+    public void setMappedValues(DriveUtil.CalcType type, Map<RobotMap.MotorGroup, Double> powerMap) {
+        for(Map.Entry<RobotMap.MotorGroup, Double> pwrMap : powerMap.entrySet()) {
+            SwerveModule aModule = getSwerveModule(pwrMap.getKey());
+            switch(type) {
+                case ANGLE: aModule.setSteerAngle(pwrMap.getValue()); break;
+                case SPEED: aModule.setDrivePower(pwrMap.getValue()); break;
+                default: throw new IllegalArgumentException("Invalid calculation type");
+            }
+        }
+    }
+
+    public void setAllPowers(double... ordered_pwrs) {
         for(int i = 0;i < ordered_pwrs.length;i++) {
             allModules[i].setDrivePower(ordered_pwrs[i]);
         }
     }
 
-    public void setAngle(double... ordered_angles) {
+    public void setAllPowers(double pwr) {
+        for(SwerveModule module : allModules) { module.setDrivePower(pwr); }
+    }
+
+    public void setAllAngles(double... ordered_angles) {
         for(int i = 0;i < ordered_angles.length;i++) {
             allModules[i].setSteerAngle(ordered_angles[i]);
         }
     }
 
-    public void setAllDrivePower(double pwr) {
-        for(SwerveModule module : allModules) { module.setDrivePower(pwr); }
+    public void setAllAngles(double angle) {
+        for(SwerveModule module : allModules) { module.setSteerAngle(angle); }
     }
 
-    public void setAllDriveDistance(double setpoint) {
+    public void setAllDriveDistances(double setpoint) {
         for(SwerveModule module : allModules) { module.setDriveDistance(setpoint); }
     }
 
-    public void setAllSteerAngle(double angle) {
-        for(SwerveModule module : allModules) { module.setSteerAngle(angle); }
+    public double[] getAllDistances() {
+        return getAllTicks(true, allModules);
+    }
+
+    public double[] getAllAngles() {
+        return getAllTicks(false, allModules);
+    }
+
+    private double[] getAllTicks(boolean isDistance, SwerveModule... modules) {
+        List<Double> ticks = new ArrayList<>();
+        for(SwerveModule module : modules) {
+            CANSparkMax controller = !isDistance ? module.getSteer() : module.getDrive();
+            ticks.add(controller.getEncoder().getPosition());
+        }
+        return ticks.stream().mapToDouble(Double::doubleValue).toArray();
     }
 
     public double[] getAllPowers(boolean isDrive) {
@@ -84,23 +114,6 @@ public class DriveTrain extends Subsystem {
 
     public void resetGyro() {
         gyro.setYaw(0);
-    }
-
-    public double[] getDistances() {
-        return getTicks(true, fr, fl, bl, br);
-    }
-
-    public double[] getAngles() {
-        return getTicks(false, fr, fl, bl, br);
-    }
-
-    private double[] getTicks(boolean isDistance, SwerveModule... modules) {
-        List<Double> ticks = new ArrayList<>();
-        for(SwerveModule module : modules) {
-            CANSparkMax controller = !isDistance ? module.getSteer() : module.getDrive();
-            ticks.add(controller.getEncoder().getPosition());
-        }
-        return ticks.stream().mapToDouble(Double::doubleValue).toArray();
     }
 
     public SwerveModule getSwerveModule(RobotMap.MotorGroup group) {
@@ -124,6 +137,6 @@ public class DriveTrain extends Subsystem {
 
     @Override
     protected void initDefaultCommand() {
-        setDefaultCommand(new SwerveControl());
+        setDefaultCommand(new DriveControl());
     }
 }

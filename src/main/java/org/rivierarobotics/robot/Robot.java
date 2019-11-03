@@ -27,13 +27,19 @@ import org.rivierarobotics.driver.Controller;
 import org.rivierarobotics.subsystems.DriveTrain;
 
 public class Robot extends TimedRobot {
+    public enum ControlMode {
+        SWERVE, TANK, CRAB, AUTOMOBILE;
+    }
+
     public static Robot runningRobot;
+    public ControlMode currentControlMode;
     public DriveTrain driveTrain;
     public Controller controller;
 
     public Robot() {
         this.driveTrain = new DriveTrain();
         this.controller = new Controller();
+        this.currentControlMode = ControlMode.SWERVE;
         runningRobot = this;
     }
 
@@ -70,11 +76,11 @@ public class Robot extends TimedRobot {
     }
 
     private void printShuffleboard() {
-        SmartDashboard.putNumberArray("Drive Distances", runningRobot.driveTrain.getDistances());
-        SmartDashboard.putNumberArray("Wheel Angles", runningRobot.driveTrain.getAngles());
+        SmartDashboard.putNumberArray("Drive Distances", runningRobot.driveTrain.getAllDistances());
+        SmartDashboard.putNumberArray("Wheel Angles", runningRobot.driveTrain.getAllAngles());
         SmartDashboard.putNumberArray("Drive Powers", runningRobot.driveTrain.getAllPowers(true));
         SmartDashboard.putNumberArray("Steering Powers", runningRobot.driveTrain.getAllPowers(false));
-        SmartDashboard.putNumberArray("Drive Encoder Ticks", runningRobot.driveTrain.getDistances());
-        SmartDashboard.putNumberArray("Steering Encoder Ticks", runningRobot.driveTrain.getAngles());
+        SmartDashboard.putNumberArray("Drive Encoder Ticks", runningRobot.driveTrain.getAllDistances());
+        SmartDashboard.putNumberArray("Steering Encoder Ticks", runningRobot.driveTrain.getAllAngles());
     }
 }

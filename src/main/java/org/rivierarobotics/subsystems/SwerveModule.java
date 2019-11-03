@@ -38,8 +38,10 @@ public class SwerveModule {
     private final CANSparkMax drive;
     private final PIDController steerPID;
     private final PIDController drivePID;
+    public final RobotMap.MotorGroup GROUP_ID;
 
     public SwerveModule(RobotMap.MotorGroup groupId) {
+        this.GROUP_ID = groupId;
         this.drive = new CANSparkMax(groupId.driveCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.steer = new CANSparkMax(groupId.steerCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.drivePID = new PIDController(d_kP, d_kI, d_kD, d_kF,

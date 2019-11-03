@@ -27,16 +27,16 @@ import org.rivierarobotics.util.FieldPosition;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.RobotMap;
 
-public class Rotate extends Command {
+public class RotateInPlace extends Command {
     private final DriveTrain driveTrain = Robot.runningRobot.driveTrain;
     private final double targetAngle;
     private double pwr = 0.25;
 
-    public Rotate(FieldPosition position) {
+    public RotateInPlace(FieldPosition position) {
         this(position.endRotation);
     }
 
-    public Rotate(double targetAngle) {
+    public RotateInPlace(double targetAngle) {
         this.targetAngle = MathUtil.fitToCircle(targetAngle);
         requires(driveTrain);
     }
@@ -44,19 +44,19 @@ public class Rotate extends Command {
     @Override
     protected void initialize() {
         double wheelAngle = Math.atan(RobotMap.Dimensions.TRACKWIDTH / RobotMap.Dimensions.WHEELBASE);
-        driveTrain.setAngle(wheelAngle, 180 - wheelAngle, wheelAngle, 180 - wheelAngle);
+        driveTrain.setAllAngles(wheelAngle, 180 - wheelAngle, wheelAngle, 180 - wheelAngle);
         double currentAngle = driveTrain.getGyroAngle();
         pwr = (targetAngle - currentAngle) > (currentAngle + (360 - targetAngle)) ? pwr * -1 : pwr;
     }
 
     @Override
     protected void execute() {
-        driveTrain.setAllDrivePower(pwr);
+        driveTrain.setAllPowers(pwr);
     }
 
     @Override
     protected void end() {
-        driveTrain.setAllDrivePower(0.0);
+        driveTrain.setAllPowers(0.0);
     }
 
     @Override

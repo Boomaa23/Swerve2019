@@ -22,31 +22,16 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.FieldPosition;
-import org.rivierarobotics.util.Vector2D;
 
-public class DriveVector extends InstantCommand {
-    private final DriveTrain driveTrain = Robot.runningRobot.driveTrain;
-    private final double distance, angle;
+public class ChangeControlMode extends InstantCommand {
+    private final Robot.ControlMode mode;
 
-    public DriveVector(double distance, double angle) {
-        this.distance = distance;
-        this.angle = angle;
-        requires(driveTrain);
-    }
-
-    public DriveVector(Vector2D vector) {
-        this(vector.getMagnitude(), vector.getAngle());
-    }
-
-    public DriveVector(FieldPosition position) {
-        this(position.vector);
+    public ChangeControlMode(Robot.ControlMode mode) {
+        this.mode = mode;
     }
 
     @Override
     protected void execute() {
-        driveTrain.setAllAngles(angle);
-        driveTrain.setAllDriveDistances(distance);
+        Robot.runningRobot.currentControlMode = mode;
     }
 }

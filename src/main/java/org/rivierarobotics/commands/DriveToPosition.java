@@ -28,6 +28,6 @@ public class DriveToPosition extends CommandGroup {
     public DriveToPosition(FieldPosition position) {
         addSequential(new DriveVector(position));
         addSequential(new TimedCommand(0.05));
-        addSequential(new Rotate(position));
+        addSequential(new RotateInPlace(position));
     }
 }
