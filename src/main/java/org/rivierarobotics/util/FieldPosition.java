@@ -24,8 +24,8 @@ public enum FieldPosition {
     MID(0, 0, 0),
     END(0, 0, 0);
 
-    public double endRotation;
-    public Vector2D vector;
+    public final double endRotation;
+    public final Vector2D vector;
 
     FieldPosition(double x ,double y, double endRotation) {
         this.vector = new Vector2D(x, y);

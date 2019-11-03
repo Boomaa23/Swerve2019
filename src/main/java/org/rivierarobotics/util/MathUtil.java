@@ -42,21 +42,7 @@ public class MathUtil {
         return 0;
     }
 
-    public static double limit(double value, double max) {
-        if (value > max) {
-            return max;
-        } else if (value < -max) {
-            return -max;
-        } else {
-            return value;
-        }
-    }
-
     public static double fitToCircle(double angle) {
         return angle < 0 ? (360 - Math.abs(angle)) % 360 : angle % 360;
-    }
-
-    public static double wrapRadians(double radians) {
-        return (360 / (2 * Math.PI)) * radians;
     }
 }

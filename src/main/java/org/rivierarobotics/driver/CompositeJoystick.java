@@ -37,8 +37,6 @@ public class CompositeJoystick {
         this.z = (BoundedJoystick) z;
     }
 
-    public CompositeJoystick() {}
-
     public double getX() {
         return x.getDimension('X');
     }

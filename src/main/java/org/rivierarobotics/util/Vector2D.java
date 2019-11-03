@@ -33,7 +33,7 @@ public class Vector2D {
     }
 
     public double getDirection() {
-        return MathUtil.wrapRadians(Math.atan2(y, x));
+        return Math.atan2(y, x) + Math.PI;
     }
 
     public double getAngle() {

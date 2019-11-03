@@ -24,8 +24,8 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.TimedCommand;
 import org.rivierarobotics.util.FieldPosition;
 
-public class DriveToFieldPosition extends CommandGroup {
-    public DriveToFieldPosition(FieldPosition position) {
+public class DriveToPosition extends CommandGroup {
+    public DriveToPosition(FieldPosition position) {
         addSequential(new DriveVector(position));
         addSequential(new TimedCommand(0.05));
         addSequential(new Rotate(position));
