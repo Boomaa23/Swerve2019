@@ -24,7 +24,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.PIDController;
 import org.rivierarobotics.util.AbstractPIDSource;
-import org.rivierarobotics.util.RobotMap;
+import org.rivierarobotics.util.MotorGroup;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,9 +38,9 @@ public class SwerveModule {
     private final CANSparkMax drive;
     private final PIDController steerPID;
     private final PIDController drivePID;
-    public final RobotMap.MotorGroup GROUP_ID;
+    public final MotorGroup GROUP_ID;
 
-    public SwerveModule(RobotMap.MotorGroup groupId) {
+    public SwerveModule(MotorGroup groupId) {
         this.GROUP_ID = groupId;
         this.drive = new CANSparkMax(groupId.driveCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.steer = new CANSparkMax(groupId.steerCANId, CANSparkMaxLowLevel.MotorType.kBrushless);

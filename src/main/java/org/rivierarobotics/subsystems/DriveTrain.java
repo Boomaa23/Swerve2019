@@ -25,6 +25,7 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.rivierarobotics.commands.DriveControl;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.MotorGroup;
 import org.rivierarobotics.util.RobotMap;
 import org.rivierarobotics.util.DriveUtil;
 
@@ -39,16 +40,16 @@ public class DriveTrain extends Subsystem {
     private final PigeonIMU gyro;
 
     public DriveTrain() {
-        this.fr = new SwerveModule(RobotMap.MotorGroup.FR);
-        this.fl = new SwerveModule(RobotMap.MotorGroup.FL);
-        this.bl = new SwerveModule(RobotMap.MotorGroup.BL);
-        this.br = new SwerveModule(RobotMap.MotorGroup.BR);
+        this.fr = new SwerveModule(MotorGroup.FR);
+        this.fl = new SwerveModule(MotorGroup.FL);
+        this.bl = new SwerveModule(MotorGroup.BL);
+        this.br = new SwerveModule(MotorGroup.BR);
         this.gyro = new PigeonIMU(RobotMap.CANDevices.GYRO);
         this.allModules = new SwerveModule[]{fr, fl, bl, br};
     }
 
-    public void setMappedValues(DriveUtil.CalcType type, Map<RobotMap.MotorGroup, Double> powerMap) {
-        for(Map.Entry<RobotMap.MotorGroup, Double> pwrMap : powerMap.entrySet()) {
+    public void setMappedValues(DriveUtil.CalcType type, Map<MotorGroup, Double> powerMap) {
+        for(Map.Entry<MotorGroup, Double> pwrMap : powerMap.entrySet()) {
             SwerveModule aModule = getSwerveModule(pwrMap.getKey());
             switch(type) {
                 case ANGLE: aModule.setSteerAngle(pwrMap.getValue()); break;
@@ -116,7 +117,7 @@ public class DriveTrain extends Subsystem {
         gyro.setYaw(0);
     }
 
-    public SwerveModule getSwerveModule(RobotMap.MotorGroup group) {
+    public SwerveModule getSwerveModule(MotorGroup group) {
         switch(group) {
             case FR: return fr;
             case FL: return fl;

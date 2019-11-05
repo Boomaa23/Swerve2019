@@ -31,26 +31,6 @@ public class RobotMap {
         int BUTTONS = 4;
     }
 
-    public enum MotorGroup {
-        FR(0, 1, Side.RIGHT),
-        FL(2, 3, Side.LEFT),
-        BL(4, 5, Side.LEFT),
-        BR(6, 7, Side.RIGHT);
-
-        public final int steerCANId, driveCANId;
-        public final Side side;
-
-        MotorGroup(int steerCANId, int driveCANId, Side side) {
-            this.steerCANId = steerCANId;
-            this.driveCANId = driveCANId;
-            this.side = side;
-        }
-
-        public enum Side {
-            LEFT, RIGHT;
-        }
-    }
-
     public interface Dimensions {
         int WHEELBASE = 1;
         int TRACKWIDTH = 1;

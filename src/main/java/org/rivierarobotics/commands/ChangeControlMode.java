@@ -22,11 +22,12 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.util.ControlMode;
 
 public class ChangeControlMode extends InstantCommand {
-    private final Robot.ControlMode mode;
+    private final ControlMode mode;
 
-    public ChangeControlMode(Robot.ControlMode mode) {
+    public ChangeControlMode(ControlMode mode) {
         this.mode = mode;
     }
 

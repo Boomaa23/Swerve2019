@@ -25,8 +25,9 @@ import org.rivierarobotics.driver.CompositeJoystick;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.DriveUtil.*;
-import org.rivierarobotics.util.RobotMap.MotorGroup;
+import org.rivierarobotics.util.MotorGroup;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 public class DriveControl extends Command {
@@ -43,31 +44,20 @@ public class DriveControl extends Command {
 
     @Override
     protected void execute() {
-        Map<MotorGroup, Double> calcSpeeds = null;
-        Map<MotorGroup, Double> calcAngles = null;
+        driveTrain.setMappedValues(CalcType.SPEED, getValuesFromReflect(CalcType.SPEED));
+        driveTrain.setMappedValues(CalcType.ANGLE, getValuesFromReflect(CalcType.ANGLE));
+    }
 
-        switch(Robot.runningRobot.currentControlMode) {
-            case CRAB:
-                //TODO implement a crab mode (front/back diff steering)
-                break;
-            case SWERVE:
-                Swerve.control(driveTrain.getGyroAngle(), compositeJoystick);
-                calcSpeeds = Swerve.calculate(CalcType.SPEED, allMotorGroups);
-                calcAngles = Swerve.calculate(CalcType.ANGLE, allMotorGroups);
-                break;
-            case AUTOMOBILE:
-                //TODO implement an "automobile" mode (back two wheels fixed, front two do steering)
-                break;
-            case TANK:
-                calcSpeeds = Tank.calculate(CalcType.SPEED, compositeJoystick, allMotorGroups);
-                calcAngles = Tank.calculate(CalcType.ANGLE, compositeJoystick, allMotorGroups);
-                break;
-            default:
-                throw new IllegalArgumentException("Current control mode could not be determined");
+    @SuppressWarnings("unchecked")
+    private Map<MotorGroup, Double> getValuesFromReflect(CalcType type) {
+        try {
+            return (Map<MotorGroup, Double>) Robot.runningRobot.currentControlMode.controlClass
+                    .getMethod("calculate", CalcType.class, CompositeJoystick.class, MotorGroup.class)
+                    .invoke(null, type, compositeJoystick, allMotorGroups);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
         }
-
-        driveTrain.setMappedValues(CalcType.SPEED, calcSpeeds);
-        driveTrain.setMappedValues(CalcType.ANGLE, calcAngles);
     }
 
     @Override

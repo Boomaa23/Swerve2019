@@ -21,6 +21,7 @@
 package org.rivierarobotics.util;
 
 import org.rivierarobotics.driver.CompositeJoystick;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.RobotMap.Dimensions;
 
 import java.util.HashMap;
@@ -28,13 +29,23 @@ import java.util.Map;
 
 public class DriveUtil {
     public enum CalcType {
-        SPEED, ANGLE;
+        SPEED, ANGLE
     }
 
     public static class Swerve {
         private static double A = 0, B = 0, C = 0, D = 0;
 
-        public static void control(double robotAngle, CompositeJoystick composite) {
+        public static Map<MotorGroup, Double> calculate(CalcType type, CompositeJoystick composite, MotorGroup... groups) {
+            control(Robot.runningRobot.driveTrain.getGyroAngle(), composite);
+            Map<MotorGroup, Double> calcs = new HashMap<>();
+            for(int i = 0;i < groups.length;i++) {
+                calcs.put(groups[i], type.equals(CalcType.SPEED) ?
+                        calcWheelSpeed(groups[i]) : calcWheelAngle(groups[i]));
+            }
+            return calcs;
+        }
+
+        private static void control(double robotAngle, CompositeJoystick composite) {
             double fwd = composite.getY() * Math.cos(robotAngle) + composite.getX() * Math.sin(robotAngle);
             double str = composite.getY() * Math.sin(robotAngle) + composite.getX() * Math.cos(robotAngle);
             double r = Math.sqrt(Math.pow(Dimensions.WHEELBASE, 2) / Math.pow(Dimensions.TRACKWIDTH, 2));
@@ -44,26 +55,17 @@ public class DriveUtil {
             D = fwd + composite.getZ() * (Dimensions.WHEELBASE / r);
         }
 
-        public static Map<RobotMap.MotorGroup, Double> calculate(CalcType type, RobotMap.MotorGroup... groups) {
-            Map<RobotMap.MotorGroup, Double> calcs = new HashMap<>();
-            for(int i = 0;i < groups.length;i++) {
-                calcs.put(groups[i], type.equals(CalcType.SPEED) ?
-                        calcWheelSpeed(groups[i]) : calcWheelAngle(groups[i]));
-            }
-            return calcs;
-        }
-
-        public static double calcWheelSpeed(RobotMap.MotorGroup group) {
+        private static double calcWheelSpeed(MotorGroup group) {
             double[] calcIndexes = getCalcIndexes(group);
             return Math.sqrt(Math.pow(calcIndexes[0], 2) + Math.pow(calcIndexes[1], 2));
         }
 
-        public static double calcWheelAngle(RobotMap.MotorGroup group) {
+        private static double calcWheelAngle(MotorGroup group) {
             double[] calcIndexes = getCalcIndexes(group);
             return Math.toDegrees(Math.atan2(calcIndexes[0], calcIndexes[1]));
         }
 
-        private static double[] getCalcIndexes(RobotMap.MotorGroup group) {
+        private static double[] getCalcIndexes(MotorGroup group) {
             double calcIndexes[];
             switch(group) {
                 case FR: calcIndexes = new double[]{B, C}; break;
@@ -77,16 +79,16 @@ public class DriveUtil {
     }
 
     public static class Tank {
-        public static Map<RobotMap.MotorGroup, Double> calculate(CalcType type, CompositeJoystick composite, RobotMap.MotorGroup... groups) {
-            Map<RobotMap.MotorGroup, Double> calcs = new HashMap<>();
+        public static Map<MotorGroup, Double> calculate(CalcType type, CompositeJoystick composite, MotorGroup... groups) {
+            Map<MotorGroup, Double> calcs = new HashMap<>();
             for(int i = 0;i < groups.length;i++) {
                 calcs.put(groups[i], type.equals(CalcType.SPEED) ?
-                        calcWheelSpeed(groups[i].side, composite.getX(), composite.getY()) : 0.0);
+                        calcWheelSpeed(groups[i].LRSide, composite.getX(), composite.getY()) : 0.0);
             }
             return calcs;
         }
 
-        private static double calcWheelSpeed(RobotMap.MotorGroup.Side motorSide, double rotate, double power) {
+        private static double calcWheelSpeed(MotorGroup.Side motorSide, double rotate, double power) {
             double max = Math.max(Math.abs(rotate), Math.abs(power));
             double diff = power - rotate;
             double sum = power + rotate;
@@ -112,7 +114,30 @@ public class DriveUtil {
                 }
             }
 
-            return motorSide.equals(RobotMap.MotorGroup.Side.LEFT) ? left : right;
+            return motorSide.equals(MotorGroup.Side.LEFT) ? left : right;
         }
+    }
+
+    public static class Automobile {
+        public static Map<MotorGroup, Double> calculate(CalcType type, CompositeJoystick composite, MotorGroup... groups) {
+            Map<MotorGroup, Double> calcs = new HashMap<>();
+            for(int i = 0;i < groups.length;i++) {
+                calcs.put(groups[i], type.equals(CalcType.SPEED) ?
+                        composite.getY() : calcFrontWheelAngle(groups[i], composite));
+            }
+            return calcs;
+        }
+
+        private static double calcFrontWheelAngle(MotorGroup group, CompositeJoystick composite) {
+            if(group.FBSide.equals(MotorGroup.Side.FRONT)) {
+                return new Vector2D(composite.getX(), composite.getY()).getAngle();
+            } else {
+                return 90.0;
+            }
+        }
+    }
+
+    public static class Crab {
+
     }
 }

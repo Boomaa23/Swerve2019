@@ -25,12 +25,9 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.driver.Controller;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.ControlMode;
 
 public class Robot extends TimedRobot {
-    public enum ControlMode {
-        SWERVE, TANK, CRAB, AUTOMOBILE;
-    }
-
     public static Robot runningRobot;
     public ControlMode currentControlMode;
     public DriveTrain driveTrain;
