@@ -36,7 +36,7 @@ public class BoundedJoystick extends Joystick {
     }
 
     public Map<Character, Double> getXYZMap() {
-        Map<Character, Double> xyz = new HashMap<Character, Double>();
+        Map<Character, Double> xyz = new HashMap<>();
         xyz.put('X', MathUtil.fitDeadband(super.getX()));
         xyz.put('Y', MathUtil.fitDeadband(super.getY()));
         xyz.put('Z', MathUtil.fitDeadband(super.getTwist()));

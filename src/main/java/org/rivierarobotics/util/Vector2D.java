@@ -18,24 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.util;
 
-import edu.wpi.first.wpilibj.command.Command;
+public class Vector2D {
+    private double x, y;
 
-public class SwerveControl extends Command {
-    public SwerveControl() {
+    public Vector2D(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 
-    @Override
-    protected void initialize() {
+    public double getMagnitude() {
+        return Math.sqrt(x * x + y * y);
     }
 
-    @Override
-    protected void execute() {
+    public double getDirection() {
+        return Math.atan2(y, x) + Math.PI;
     }
 
-    @Override
-    protected boolean isFinished() {
-        return false;
+    public double getAngle() {
+        return Math.toDegrees(getDirection());
     }
 }

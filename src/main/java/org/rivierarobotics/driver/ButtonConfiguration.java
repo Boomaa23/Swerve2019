@@ -18,31 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.driver;
 
-public class RobotConstants {
-    public interface CANDevices {
-        int GYRO = 8;
-    }
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import org.rivierarobotics.robot.Robot;
 
-    public interface Joysticks {
-        int LEFT_JS = 0;
-        int RIGHT_JS = 1;
-        int BUTTONS = 4;
-    }
+public class ButtonConfiguration {
+    private static final Joystick buttons = Robot.runningRobot.controller.buttons;
 
-    public enum MotorGroups {
-        FL(0, 1),
-        FR(2, 3),
-        BL(4, 5),
-        BR(6, 7);
-
-        public final int steerCANId;
-        public final int driveCANId;
-
-        private MotorGroups(int steerCANId, int driveCANId) {
-            this.steerCANId = steerCANId;
-            this.driveCANId = driveCANId;
-        }
+    public static void initButtons() {
+       for (ButtonMap button : ButtonMap.class.getEnumConstants()) {
+           JoystickButton jsb = new JoystickButton(buttons, button.port);
+           jsb.whenPressed(button.whenPressedCommand);
+           if (button.whenReleasedCommand != null) {
+               jsb.whenReleased(button.whenReleasedCommand);
+           }
+       }
     }
 }

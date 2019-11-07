@@ -20,29 +20,19 @@
 
 package org.rivierarobotics.util;
 
-public class MathUtil {
-    private static final double DEADBAND = 0.1;
-
-    public static double fitDeadband(double val) {
-        if (!(Math.abs(val) < DEADBAND)) {
-            if (val > 0) {
-                if (val >= 1) {
-                    return 1;
-                } else {
-                    return val - DEADBAND;
-                }
-            } else if (val < 0) {
-                if (val <= -1) {
-                    return -1;
-                } else {
-                    return val + DEADBAND;
-                }
-            }
-        }
-        return 0;
+public class RobotMap {
+    public interface CANDevices {
+        int GYRO = 8;
     }
 
-    public static double fitToCircle(double angle) {
-        return angle < 0 ? (360 - Math.abs(angle)) % 360 : angle % 360;
+    public interface Joysticks {
+        int LEFT_JS = 0;
+        int RIGHT_JS = 1;
+        int BUTTONS = 4;
+    }
+
+    public interface Dimensions {
+        int WHEELBASE = 1;
+        int TRACKWIDTH = 1;
     }
 }

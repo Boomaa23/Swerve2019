@@ -20,29 +20,15 @@
 
 package org.rivierarobotics.util;
 
-public class MathUtil {
-    private static final double DEADBAND = 0.1;
+public enum FieldPosition {
+    MID(0, 0, 0),
+    END(0, 0, 0);
 
-    public static double fitDeadband(double val) {
-        if (!(Math.abs(val) < DEADBAND)) {
-            if (val > 0) {
-                if (val >= 1) {
-                    return 1;
-                } else {
-                    return val - DEADBAND;
-                }
-            } else if (val < 0) {
-                if (val <= -1) {
-                    return -1;
-                } else {
-                    return val + DEADBAND;
-                }
-            }
-        }
-        return 0;
-    }
+    public final double endRotation;
+    public final Vector2D vector;
 
-    public static double fitToCircle(double angle) {
-        return angle < 0 ? (360 - Math.abs(angle)) % 360 : angle % 360;
+    FieldPosition(double x ,double y, double endRotation) {
+        this.vector = new Vector2D(x, y);
+        this.endRotation = endRotation;
     }
 }

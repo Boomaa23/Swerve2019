@@ -18,31 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.commands;
 
-public class MathUtil {
-    private static final double DEADBAND = 0.1;
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.TimedCommand;
+import org.rivierarobotics.util.FieldPosition;
 
-    public static double fitDeadband(double val) {
-        if (!(Math.abs(val) < DEADBAND)) {
-            if (val > 0) {
-                if (val >= 1) {
-                    return 1;
-                } else {
-                    return val - DEADBAND;
-                }
-            } else if (val < 0) {
-                if (val <= -1) {
-                    return -1;
-                } else {
-                    return val + DEADBAND;
-                }
-            }
-        }
-        return 0;
-    }
-
-    public static double fitToCircle(double angle) {
-        return angle < 0 ? (360 - Math.abs(angle)) % 360 : angle % 360;
+public class DriveToPosition extends CommandGroup {
+    public DriveToPosition(FieldPosition position) {
+        addSequential(new DriveVector(position));
+        addSequential(new TimedCommand(0.05));
+        addSequential(new RotateInPlace(position));
     }
 }

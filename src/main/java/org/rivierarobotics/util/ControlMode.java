@@ -18,16 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.driver;
+package org.rivierarobotics.util;
 
-import org.rivierarobotics.util.RobotConstants;
+import org.rivierarobotics.util.DriveUtil.*;
 
-public class Driver {
-    public final BoundedJoystick left, right, buttons;
+public enum ControlMode {
+    SWERVE(Swerve.class),
+    TANK(Tank.class),
+    CRAB(Crab.class),
+    AUTOMOBILE(Automobile.class);
 
-    public Driver() {
-        this.left = new BoundedJoystick(RobotConstants.Joysticks.LEFT_JS);
-        this.right = new BoundedJoystick(RobotConstants.Joysticks.RIGHT_JS);
-        this.buttons = new BoundedJoystick(RobotConstants.Joysticks.BUTTONS);
+    public Class<?> controlClass;
+
+    ControlMode(Class<?> controlClass) {
+        this.controlClass = controlClass;
     }
 }

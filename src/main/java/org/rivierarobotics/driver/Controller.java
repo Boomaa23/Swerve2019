@@ -18,31 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.driver;
 
-public class MathUtil {
-    private static final double DEADBAND = 0.1;
+import org.rivierarobotics.util.RobotMap;
 
-    public static double fitDeadband(double val) {
-        if (!(Math.abs(val) < DEADBAND)) {
-            if (val > 0) {
-                if (val >= 1) {
-                    return 1;
-                } else {
-                    return val - DEADBAND;
-                }
-            } else if (val < 0) {
-                if (val <= -1) {
-                    return -1;
-                } else {
-                    return val + DEADBAND;
-                }
-            }
-        }
-        return 0;
-    }
+public class Controller {
+    public final BoundedJoystick left, right, buttons;
+    public final CompositeJoystick composite;
 
-    public static double fitToCircle(double angle) {
-        return angle < 0 ? (360 - Math.abs(angle)) % 360 : angle % 360;
+    public Controller() {
+        this.left = new BoundedJoystick(RobotMap.Joysticks.LEFT_JS);
+        this.right = new BoundedJoystick(RobotMap.Joysticks.RIGHT_JS);
+        this.buttons = new BoundedJoystick(RobotMap.Joysticks.BUTTONS);
+        this.composite = new CompositeJoystick(left, right, left);
     }
 }

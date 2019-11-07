@@ -18,31 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.driver;
 
-public class MathUtil {
-    private static final double DEADBAND = 0.1;
+import edu.wpi.first.wpilibj.Joystick;
 
-    public static double fitDeadband(double val) {
-        if (!(Math.abs(val) < DEADBAND)) {
-            if (val > 0) {
-                if (val >= 1) {
-                    return 1;
-                } else {
-                    return val - DEADBAND;
-                }
-            } else if (val < 0) {
-                if (val <= -1) {
-                    return -1;
-                } else {
-                    return val + DEADBAND;
-                }
-            }
-        }
-        return 0;
+public class CompositeJoystick {
+    private BoundedJoystick x, y, z;
+
+    public CompositeJoystick(BoundedJoystick x, BoundedJoystick y, BoundedJoystick z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
-    public static double fitToCircle(double angle) {
-        return angle < 0 ? (360 - Math.abs(angle)) % 360 : angle % 360;
+    public CompositeJoystick(Joystick x, Joystick y, Joystick z) {
+        this.x = (BoundedJoystick) x;
+        this.y = (BoundedJoystick) y;
+        this.z = (BoundedJoystick) z;
+    }
+
+    public double getX() {
+        return x.getDimension('X');
+    }
+
+    public double getY() {
+        return y.getDimension('Y');
+    }
+
+    public double getZ() {
+        return z.getDimension('Z');
     }
 }

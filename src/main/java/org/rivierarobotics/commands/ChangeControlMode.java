@@ -18,31 +18,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.commands;
 
-public class MathUtil {
-    private static final double DEADBAND = 0.1;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.util.ControlMode;
 
-    public static double fitDeadband(double val) {
-        if (!(Math.abs(val) < DEADBAND)) {
-            if (val > 0) {
-                if (val >= 1) {
-                    return 1;
-                } else {
-                    return val - DEADBAND;
-                }
-            } else if (val < 0) {
-                if (val <= -1) {
-                    return -1;
-                } else {
-                    return val + DEADBAND;
-                }
-            }
-        }
-        return 0;
+public class ChangeControlMode extends InstantCommand {
+    private final ControlMode mode;
+
+    public ChangeControlMode(ControlMode mode) {
+        this.mode = mode;
     }
 
-    public static double fitToCircle(double angle) {
-        return angle < 0 ? (360 - Math.abs(angle)) % 360 : angle % 360;
+    @Override
+    protected void execute() {
+        Robot.runningRobot.currentControlMode = mode;
     }
 }

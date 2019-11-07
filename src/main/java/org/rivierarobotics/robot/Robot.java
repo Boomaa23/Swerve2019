@@ -22,22 +22,29 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import org.rivierarobotics.driver.Driver;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.rivierarobotics.driver.ButtonConfiguration;
+import org.rivierarobotics.driver.Controller;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.ControlMode;
 
 public class Robot extends TimedRobot {
     public static Robot runningRobot;
+    public ControlMode currentControlMode;
     public DriveTrain driveTrain;
-    public Driver driver;
+    public Controller controller;
 
     public Robot() {
         this.driveTrain = new DriveTrain();
-        this.driver = new Driver();
+        this.controller = new Controller();
+        this.currentControlMode = ControlMode.SWERVE;
         runningRobot = this;
     }
 
     @Override
     public void robotInit() {
+        driveTrain.resetGyro();
+        ButtonConfiguration.initButtons();
     }
 
     @Override
@@ -62,10 +69,16 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
+        driveTrain.stop();
         printShuffleboard();
     }
 
     private void printShuffleboard() {
-        //put log outputs here if needed
+        SmartDashboard.putNumberArray("Drive Distances", runningRobot.driveTrain.getAllDistances());
+        SmartDashboard.putNumberArray("Wheel Angles", runningRobot.driveTrain.getAllAngles());
+        SmartDashboard.putNumberArray("Drive Powers", runningRobot.driveTrain.getAllPowers(true));
+        SmartDashboard.putNumberArray("Steering Powers", runningRobot.driveTrain.getAllPowers(false));
+        SmartDashboard.putNumberArray("Drive Encoder Ticks", runningRobot.driveTrain.getAllDistances());
+        SmartDashboard.putNumberArray("Steering Encoder Ticks", runningRobot.driveTrain.getAllAngles());
     }
 }

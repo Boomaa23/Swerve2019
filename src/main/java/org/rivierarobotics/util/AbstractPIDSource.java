@@ -20,29 +20,32 @@
 
 package org.rivierarobotics.util;
 
-public class MathUtil {
-    private static final double DEADBAND = 0.1;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 
-    public static double fitDeadband(double val) {
-        if (!(Math.abs(val) < DEADBAND)) {
-            if (val > 0) {
-                if (val >= 1) {
-                    return 1;
-                } else {
-                    return val - DEADBAND;
-                }
-            } else if (val < 0) {
-                if (val <= -1) {
-                    return -1;
-                } else {
-                    return val + DEADBAND;
-                }
-            }
-        }
-        return 0;
+import java.util.function.DoubleSupplier;
+
+public class AbstractPIDSource implements PIDSource {
+    private final DoubleSupplier source;
+    private PIDSourceType sourceType = PIDSourceType.kDisplacement;
+
+    public AbstractPIDSource(DoubleSupplier source) {
+        this.source = source;
     }
 
-    public static double fitToCircle(double angle) {
-        return angle < 0 ? (360 - Math.abs(angle)) % 360 : angle % 360;
+    @Override
+    public PIDSourceType getPIDSourceType() {
+        return sourceType;
     }
+
+    @Override
+    public void setPIDSourceType(PIDSourceType pidSource) {
+        this.sourceType = pidSource;
+    }
+
+    @Override
+    public double pidGet() {
+        return source.getAsDouble();
+    }
+
 }

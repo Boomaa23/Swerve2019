@@ -22,18 +22,63 @@ package org.rivierarobotics.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import org.rivierarobotics.util.RobotConstants;
+import edu.wpi.first.wpilibj.PIDController;
+import org.rivierarobotics.util.AbstractPIDSource;
+import org.rivierarobotics.util.MotorGroup;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class SwerveModule {
+    public static final double TICKS_TO_INCHES = 0;
+    public static final double ANGLE_SCALE = 4096 / 360;
+    private static final double d_kP = 0, d_kI = 0, d_kD = 0, d_kF = 0;
+    private static final double s_kP = 0, s_kI = 0, s_kD = 0, s_kF = 0;
     private final CANSparkMax steer;
     private final CANSparkMax drive;
+    private final PIDController steerPID;
+    private final PIDController drivePID;
+    public final MotorGroup GROUP_ID;
 
-    public SwerveModule(RobotConstants.MotorGroups groupId) {
+    public SwerveModule(MotorGroup groupId) {
+        this.GROUP_ID = groupId;
         this.drive = new CANSparkMax(groupId.driveCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.steer = new CANSparkMax(groupId.steerCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
+        this.drivePID = new PIDController(d_kP, d_kI, d_kD, d_kF,
+                new AbstractPIDSource(this::getSteerAngle), this::setRawDrivePower, 0.01);
+        this.steerPID = new PIDController(s_kP, s_kI, s_kD, s_kF,
+                new AbstractPIDSource(this::getDriveDistance), this::setRawSteerPower, 0.01);
+    }
+
+    public void setDrivePower(double pwr) {
+        if(pwr != 0 && drivePID.isEnabled()) { drivePID.disable(); }
+        setRawDrivePower(pwr);
+    }
+
+    private void setRawDrivePower(double pwr) {
+        drive.set(pwr);
+    }
+
+    private void setRawSteerPower(double pwr) {
+        drive.set(pwr);
+    }
+
+    public void setDriveDistance(double distance) {
+        drivePID.setSetpoint(distance / TICKS_TO_INCHES);
+        drivePID.enable();
+    }
+
+    public void setSteerAngle(double angle) {
+        steerPID.setSetpoint(angle * ANGLE_SCALE);
+        drivePID.enable();
+    }
+
+    public double getSteerAngle() {
+        return steer.getEncoder().getPosition();
+    }
+
+    public double getDriveDistance() {
+        return drive.getEncoder().getPosition();
     }
 
     public List<CANSparkMax> getModuleMotors() {
@@ -46,5 +91,9 @@ public class SwerveModule {
 
     public CANSparkMax getSteer() {
         return steer;
+    }
+
+    public PIDController getPIDController(CANSparkMax controller) {
+        return controller.equals(drive) ? drivePID : steerPID;
     }
 }
