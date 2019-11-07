@@ -23,6 +23,7 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.rivierarobotics.driver.ButtonConfiguration;
 import org.rivierarobotics.driver.Controller;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.ControlMode;
@@ -43,6 +44,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         driveTrain.resetGyro();
+        ButtonConfiguration.initButtons();
     }
 
     @Override
@@ -57,7 +59,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-
     }
 
     @Override
