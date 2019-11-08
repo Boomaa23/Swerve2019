@@ -43,7 +43,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
-        driveTrain.resetGyro();
         ButtonConfiguration.initButtons();
     }
 
@@ -59,6 +58,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        driveTrain.resetGyro();
     }
 
     @Override
@@ -74,11 +74,11 @@ public class Robot extends TimedRobot {
     }
 
     private void printShuffleboard() {
-        SmartDashboard.putNumberArray("Drive Distances", runningRobot.driveTrain.getAllDistances());
-        SmartDashboard.putNumberArray("Wheel Angles", runningRobot.driveTrain.getAllAngles());
+        SmartDashboard.putNumberArray("Drive Distances", runningRobot.driveTrain.getAllValues(false, true));
+        SmartDashboard.putNumberArray("Wheel Angles", runningRobot.driveTrain.getAllValues(false, false));
         SmartDashboard.putNumberArray("Drive Powers", runningRobot.driveTrain.getAllPowers(true));
         SmartDashboard.putNumberArray("Steering Powers", runningRobot.driveTrain.getAllPowers(false));
-        SmartDashboard.putNumberArray("Drive Encoder Ticks", runningRobot.driveTrain.getAllDistances());
-        SmartDashboard.putNumberArray("Steering Encoder Ticks", runningRobot.driveTrain.getAllAngles());
+        SmartDashboard.putNumberArray("Drive Encoder Ticks", runningRobot.driveTrain.getAllValues(true, true));
+        SmartDashboard.putNumberArray("Steering Encoder Ticks", runningRobot.driveTrain.getAllValues(true, false));
     }
 }

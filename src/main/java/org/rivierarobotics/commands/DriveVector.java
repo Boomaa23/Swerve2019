@@ -45,7 +45,7 @@ public class DriveVector extends InstantCommand {
     }
 
     @Override
-    protected void execute() {
+    public void execute() {
         driveTrain.setAllAngles(angle);
         driveTrain.setAllDriveDistances(distance);
     }

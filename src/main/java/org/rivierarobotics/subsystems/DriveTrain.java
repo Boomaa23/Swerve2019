@@ -21,16 +21,17 @@
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
-import com.revrobotics.CANSparkMax;
+import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.rivierarobotics.commands.DriveControl;
+import org.rivierarobotics.util.DriveCalculation;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorGroup;
 import org.rivierarobotics.util.RobotMap;
-import org.rivierarobotics.util.DriveUtil;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -48,69 +49,76 @@ public class DriveTrain extends Subsystem {
         this.allModules = new SwerveModule[]{fr, fl, bl, br};
     }
 
-    public void setMappedValues(DriveUtil.CalcType type, Map<MotorGroup, Double> powerMap) {
-        for(Map.Entry<MotorGroup, Double> pwrMap : powerMap.entrySet()) {
+    public void setMappedValues(DriveCalculation.CalcType type, Map<MotorGroup, Double> powerMap) {
+        for (Map.Entry<MotorGroup, Double> pwrMap : powerMap.entrySet()) {
             SwerveModule aModule = getSwerveModule(pwrMap.getKey());
-            switch(type) {
-                case ANGLE: aModule.setSteerAngle(pwrMap.getValue()); break;
-                case SPEED: aModule.setDrivePower(pwrMap.getValue()); break;
-                default: throw new IllegalArgumentException("Invalid calculation type");
+            switch (type) {
+                case ANGLE:
+                    aModule.setSteerAngle(pwrMap.getValue());
+                    break;
+                case SPEED:
+                    aModule.setDrivePower(pwrMap.getValue());
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid calculation type");
             }
         }
     }
 
     public void setAllPowers(double... ordered_pwrs) {
-        for(int i = 0;i < ordered_pwrs.length;i++) {
+        for (int i = 0; i < ordered_pwrs.length; i++) {
             allModules[i].setDrivePower(ordered_pwrs[i]);
         }
     }
 
     public void setAllPowers(double pwr) {
-        for(SwerveModule module : allModules) { module.setDrivePower(pwr); }
+        for (SwerveModule module : allModules) {
+            module.setDrivePower(pwr);
+        }
     }
 
     public void setAllAngles(double... ordered_angles) {
-        for(int i = 0;i < ordered_angles.length;i++) {
+        for (int i = 0; i < ordered_angles.length; i++) {
             allModules[i].setSteerAngle(ordered_angles[i]);
         }
     }
 
     public void setAllAngles(double angle) {
-        for(SwerveModule module : allModules) { module.setSteerAngle(angle); }
+        for (SwerveModule module : allModules) {
+            module.setSteerAngle(angle);
+        }
     }
 
     public void setAllDriveDistances(double setpoint) {
-        for(SwerveModule module : allModules) { module.setDriveDistance(setpoint); }
+        for (SwerveModule module : allModules) {
+            module.setDriveDistance(setpoint);
+        }
     }
 
-    public double[] getAllDistances() {
-        return getAllTicks(true, allModules);
-    }
-
-    public double[] getAllAngles() {
-        return getAllTicks(false, allModules);
-    }
-
-    private double[] getAllTicks(boolean isDistance, SwerveModule... modules) {
+    public double[] getAllValues(boolean isTicks, boolean isDistance) {
         List<Double> ticks = new ArrayList<>();
-        for(SwerveModule module : modules) {
-            CANSparkMax controller = !isDistance ? module.getSteer() : module.getDrive();
-            ticks.add(controller.getEncoder().getPosition());
+        for (SwerveModule module : allModules) {
+            if (isDistance) {
+                ticks.add(isTicks ? module.getDriveDistanceTicks() : module.getDriveDistance());
+            } else {
+                ticks.add(isTicks ? module.getSteerAngleTicks() : module.getSteerAngle());
+            }
         }
         return ticks.stream().mapToDouble(Double::doubleValue).toArray();
     }
 
     public double[] getAllPowers(boolean isDrive) {
         double[] powers = new double[allModules.length];
-        for(int i = 0;i < allModules.length;i++) {
-            powers[i] = isDrive ? allModules[i].getDrive().get() : allModules[i].getSteer().get(); }
+        for (int i = 0; i < allModules.length; i++) {
+            powers[i] = isDrive ? allModules[i].getDrive().get() : allModules[i].getSteer().get();
+        }
         return powers;
     }
 
     public double getGyroAngle() {
         double[] ypr = new double[3];
         gyro.getYawPitchRoll(ypr);
-        return MathUtil.fitToCircle(ypr[0]);
+        return MathUtil.fitToDegCircle(ypr[0]);
     }
 
     public void resetGyro() {
@@ -118,18 +126,23 @@ public class DriveTrain extends Subsystem {
     }
 
     public SwerveModule getSwerveModule(MotorGroup group) {
-        switch(group) {
-            case FR: return fr;
-            case FL: return fl;
-            case BL: return bl;
-            case BR: return br;
-            default: throw new InvalidParameterException("Motor group " + group.name() + " could not be found");
+        switch (group) {
+            case FR:
+                return fr;
+            case FL:
+                return fl;
+            case BL:
+                return bl;
+            case BR:
+                return br;
+            default:
+                throw new InvalidParameterException("Motor group " + group.name() + " could not be found");
         }
     }
 
     public void stop() {
-        for(SwerveModule module : allModules) {
-            for(CANSparkMax controller : module.getModuleMotors()) {
+        for (SwerveModule module : allModules) {
+            for (SpeedController controller : Arrays.asList(module.getDrive(), module.getSteer())) {
                 module.getPIDController(controller).disable();
                 controller.stopMotor();
             }
