@@ -20,7 +20,9 @@
 
 package org.rivierarobotics.util;
 
-public class Vector2D {
+import edu.wpi.first.wpilibj.drive.Vector2d;
+
+public class Vector2D extends Vector2d {
     private double x, y;
 
     public Vector2D(double x, double y) {
@@ -29,7 +31,7 @@ public class Vector2D {
     }
 
     public double getMagnitude() {
-        return Math.sqrt(x * x + y * y);
+        return magnitude();
     }
 
     public double getDirection() {
@@ -37,6 +39,6 @@ public class Vector2D {
     }
 
     public double getAngle() {
-        return Math.toDegrees(getDirection());
+        return getDirection() * (180 / Math.PI);
     }
 }

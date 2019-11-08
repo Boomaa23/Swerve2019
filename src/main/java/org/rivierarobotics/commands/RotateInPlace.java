@@ -37,7 +37,7 @@ public class RotateInPlace extends Command {
     }
 
     public RotateInPlace(double targetAngle) {
-        this.targetAngle = MathUtil.fitToCircle(targetAngle);
+        this.targetAngle = MathUtil.fitToDegCircle(targetAngle);
         requires(driveTrain);
     }
 

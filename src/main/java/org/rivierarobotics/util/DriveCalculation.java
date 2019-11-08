@@ -27,7 +27,7 @@ import org.rivierarobotics.util.RobotMap.Dimensions;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DriveUtil {
+public class DriveCalculation {
     public enum CalcType {
         SPEED, ANGLE
     }
@@ -38,7 +38,7 @@ public class DriveUtil {
         public static Map<MotorGroup, Double> calculate(CalcType type, CompositeJoystick composite, MotorGroup... groups) {
             control(Robot.runningRobot.driveTrain.getGyroAngle(), composite);
             Map<MotorGroup, Double> calcs = new HashMap<>();
-            for(int i = 0;i < groups.length;i++) {
+            for (int i = 0; i < groups.length; i++) {
                 calcs.put(groups[i], type.equals(CalcType.SPEED) ?
                         calcWheelSpeed(groups[i]) : calcWheelAngle(groups[i]));
             }
@@ -67,7 +67,7 @@ public class DriveUtil {
 
         private static double[] getCalcIndexes(MotorGroup group) {
             double calcIndexes[];
-            switch(group) {
+            switch (group) {
                 case FR: calcIndexes = new double[]{B, C}; break;
                 case FL: calcIndexes = new double[]{B, D}; break;
                 case BL: calcIndexes = new double[]{A, D}; break;
@@ -81,7 +81,7 @@ public class DriveUtil {
     public static class Tank {
         public static Map<MotorGroup, Double> calculate(CalcType type, CompositeJoystick composite, MotorGroup... groups) {
             Map<MotorGroup, Double> calcs = new HashMap<>();
-            for(int i = 0;i < groups.length;i++) {
+            for (int i = 0; i < groups.length; i++) {
                 calcs.put(groups[i], type.equals(CalcType.SPEED) ?
                         calcWheelSpeed(groups[i].LRSide, composite.getX(), composite.getY()) : 0.0);
             }
@@ -121,7 +121,7 @@ public class DriveUtil {
     public static class Automobile {
         public static Map<MotorGroup, Double> calculate(CalcType type, CompositeJoystick composite, MotorGroup... groups) {
             Map<MotorGroup, Double> calcs = new HashMap<>();
-            for(int i = 0;i < groups.length;i++) {
+            for (int i = 0; i < groups.length; i++) {
                 calcs.put(groups[i], type.equals(CalcType.SPEED) ?
                         composite.getY() : calcFrontWheelAngle(groups[i], composite));
             }
@@ -129,7 +129,7 @@ public class DriveUtil {
         }
 
         private static double calcFrontWheelAngle(MotorGroup group, CompositeJoystick composite) {
-            if(group.FBSide.equals(MotorGroup.Side.FRONT)) {
+            if (group.FBSide.equals(MotorGroup.Side.FRONT)) {
                 return new Vector2D(composite.getX(), composite.getY()).getAngle();
             } else {
                 return 90.0;

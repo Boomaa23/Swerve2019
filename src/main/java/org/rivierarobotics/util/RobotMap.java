@@ -32,7 +32,7 @@ public class RobotMap {
     }
 
     public interface Dimensions {
-        int WHEELBASE = 1;
-        int TRACKWIDTH = 1;
+        double WHEELBASE = 1;
+        double TRACKWIDTH = 1;
     }
 }
