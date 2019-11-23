@@ -53,14 +53,9 @@ public class DriveTrain extends Subsystem {
         for (Map.Entry<MotorGroup, Double> pwrMap : powerMap.entrySet()) {
             SwerveModule aModule = getSwerveModule(pwrMap.getKey());
             switch (type) {
-                case ANGLE:
-                    aModule.setSteerAngle(pwrMap.getValue());
-                    break;
-                case SPEED:
-                    aModule.setDrivePower(pwrMap.getValue());
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid calculation type");
+                case ANGLE: aModule.setSteerAngle(pwrMap.getValue()); break;
+                case SPEED: aModule.setDrivePower(pwrMap.getValue()); break;
+                default: throw new IllegalArgumentException("Invalid calculation type");
             }
         }
     }
@@ -122,21 +117,22 @@ public class DriveTrain extends Subsystem {
     }
 
     public void resetGyro() {
-        gyro.setYaw(0);
+        gyro.setYaw(90);
+    }
+
+    public void resetDriveEncoders() {
+        for (SwerveModule module : allModules) {
+            module.getDrive().getEncoder().setPosition(0.0);
+        }
     }
 
     public SwerveModule getSwerveModule(MotorGroup group) {
         switch (group) {
-            case FR:
-                return fr;
-            case FL:
-                return fl;
-            case BL:
-                return bl;
-            case BR:
-                return br;
-            default:
-                throw new InvalidParameterException("Motor group " + group.name() + " could not be found");
+            case FR: return fr;
+            case FL: return fl;
+            case BL: return bl;
+            case BR: return br;
+            default: throw new InvalidParameterException("Motor group " + group.name() + " could not be found");
         }
     }
 

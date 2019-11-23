@@ -32,8 +32,8 @@ import org.rivierarobotics.util.MotorGroup;
 public class SwerveModule {
     public static final double TICKS_TO_INCHES = 1, ANGLE_SCALE = 4096.0 / 360,
             MAX_PID_STEER = 0.5, MAX_PID_DRIVE = 0.5;
-    private static final double d_kP = 0, d_kI = 0, d_kD = 0, d_kF = 0;
-    private static final double s_kP = 0, s_kI = 0, s_kD = 0, s_kF = 0;
+    private static final double d_kP = 0, d_kI = 0, d_kD = 0, d_kF = 0,
+            s_kP = 0, s_kI = 0, s_kD = 0, s_kF = 0;
     private final WPI_TalonSRX steer;
     private final CANSparkMax drive;
     private final PIDController steerPID, drivePID;
@@ -43,9 +43,9 @@ public class SwerveModule {
         this.groupId = groupId;
         this.drive = new CANSparkMax(groupId.driveCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.steer = new WPI_TalonSRX(groupId.steerCANId);
-        this.drivePID = new PIDController(s_kP, s_kI, s_kD, s_kF,
+        this.drivePID = new PIDController(d_kP, d_kI, d_kD, d_kF,
                 new AbstractPIDSource(this::getDriveDistanceTicks), this::setRawSteerPower, 0.01);
-        this.steerPID = new PIDController(d_kP, d_kI, d_kD, d_kF,
+        this.steerPID = new PIDController(s_kP, s_kI, s_kD, s_kF,
                 new AbstractPIDSource(() -> MathUtil.moduloPositive(getSteerAngleTicks(), 4096)),
                 this::setRawDrivePower, 0.01);
 
@@ -87,7 +87,7 @@ public class SwerveModule {
     }
 
     public int getSteerAngleTicks() {
-        return steer.getSensorCollection().getPulseWidthPosition();
+        return steer.getSensorCollection().getQuadraturePosition();
     }
 
     public double getSteerAngle() {

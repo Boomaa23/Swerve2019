@@ -18,24 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.commands;
 
-public enum FieldPosition {
-    ORIGIN(0,0,0, CentricMode.FIELD),
-    FORWARD_ONE_FOOT(0, 12, 270, CentricMode.ROBOT),
-    DIAGONAL_ONE_FOOT(Math.sqrt(2) / 2, Math.sqrt(2) / 2, 135, CentricMode.ROBOT);
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.TimedCommand;
+import org.rivierarobotics.util.FieldPosition;
 
-    public final double endRotation;
-    public final Vector2D vector;
-    public final CentricMode centric;
-
-    FieldPosition(double x, double y, double endRotation, CentricMode centric) {
-        this.vector = new Vector2D(x, y);
-        this.endRotation = endRotation;
-        this.centric = centric;
-    }
-
-    public enum CentricMode {
-        FIELD, ROBOT
+public class DriveToFieldPosition extends CommandGroup {
+    public DriveToFieldPosition(FieldPosition position) {
+        addSequential(new DriveVector(position));
+        addSequential(new TimedCommand(0.1));
+        addSequential(new RotateInPlace(position));
     }
 }

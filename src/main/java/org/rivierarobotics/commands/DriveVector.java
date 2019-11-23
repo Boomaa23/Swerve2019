@@ -46,6 +46,8 @@ public class DriveVector extends InstantCommand {
 
     @Override
     public void execute() {
+        Robot.runningRobot.currentPosition
+                .add(Math.cos(angle) * distance, Math.sin(angle) * distance);
         driveTrain.setAllAngles(angle);
         driveTrain.setAllDriveDistances(distance);
     }

@@ -24,6 +24,7 @@ import org.rivierarobotics.driver.CompositeJoystick;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.RobotMap.Dimensions;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -120,24 +121,29 @@ public class DriveCalculation {
 
     public static class Automobile {
         public static Map<MotorGroup, Double> calculate(CalcType type, CompositeJoystick composite, MotorGroup... groups) {
+            Map<MotorGroup, Double> baseCalc = Crab.calculate(type, composite, groups);
+            baseCalc.replace(MotorGroup.BL, baseCalc.get(MotorGroup.FL) + 90);
+            baseCalc.replace(MotorGroup.BR, baseCalc.get(MotorGroup.FR) + 90);
+            return baseCalc;
+        }
+    }
+
+    public static class Crab {
+        public static Map<MotorGroup, Double> calculate(CalcType type, CompositeJoystick composite, MotorGroup... groups) {
             Map<MotorGroup, Double> calcs = new HashMap<>();
             for (int i = 0; i < groups.length; i++) {
                 calcs.put(groups[i], type.equals(CalcType.SPEED) ?
-                        composite.getY() : calcFrontWheelAngle(groups[i], composite));
+                        composite.getY() : calcWheelAngle(groups[i], composite));
             }
             return calcs;
         }
 
-        private static double calcFrontWheelAngle(MotorGroup group, CompositeJoystick composite) {
-            if (group.FBSide.equals(MotorGroup.Side.FRONT)) {
+        public static double calcWheelAngle(MotorGroup group, CompositeJoystick composite) {
+            if(group.FBSide.equals(MotorGroup.Side.FRONT)) {
                 return new Vector2D(composite.getX(), composite.getY()).getAngle();
             } else {
                 return 90.0;
             }
         }
-    }
-
-    public static class Crab {
-
     }
 }

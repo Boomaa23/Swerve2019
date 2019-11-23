@@ -20,20 +20,46 @@
 
 package org.rivierarobotics.driver;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.util.FieldPosition;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 
-public class ButtonConfiguration {
-    private static final Joystick buttons = Robot.runningRobot.controller.buttons;
+public enum ButtonConfiguration {
+    FORWARD_ONE_FOOT(0, "DriveToFieldPosition",
+                             new Object[]{ FieldPosition.FORWARD_ONE_FOOT }),
+    SKEW_DIAGONAL_ONE_FOOT(1, "DriveToFieldPosition",
+                                   new Object[]{ FieldPosition.DIAGONAL_ONE_FOOT });
+
+    public boolean include = true;
+    public int buttonNum;
+    public Command whenPressedCommand, whenReleasedCommand;
+    ButtonConfiguration(int buttonNum, String whenPressedCommandName, String whenReleasedCommandName,
+                        Object[] whenPressedParameters, Object[] whenReleasedParameters) {
+        this.buttonNum = buttonNum;
+        this.whenPressedCommand = getCommand(whenPressedCommandName, whenPressedParameters);
+        if (whenReleasedParameters != null && whenReleasedParameters.length != 0) {
+            this.whenReleasedCommand = getCommand(whenReleasedCommandName, whenReleasedParameters);
+        } else {
+            this.whenReleasedCommand = null;
+        }
+    }
+
+    ButtonConfiguration(int buttonNum, String whenPressedCommandName, String whenReleasedCommandName,
+                        Object[] whenPressedParameters, Object[] whenReleasedParameters, boolean include) {
+        this(buttonNum, whenPressedCommandName, whenReleasedCommandName, whenPressedParameters, whenReleasedParameters);
+        this.include = include;
+    }
+
+    ButtonConfiguration(int buttonNum, String whenPressedCommandName, Object[] whenPressedParameters) {
+        this(buttonNum, whenPressedCommandName, "", whenPressedParameters, new Object[]{});
+    }
 
     public static void initButtons() {
-        for (ButtonMap button : ButtonMap.class.getEnumConstants()) {
-            JoystickButton jsb = new JoystickButton(buttons, button.port);
+        for (ButtonConfiguration button : ButtonConfiguration.class.getEnumConstants()) {
+            JoystickButton jsb = new JoystickButton(Robot.runningRobot.controller.buttons, button.buttonNum);
             jsb.whenPressed(button.whenPressedCommand);
             if (button.whenReleasedCommand != null) {
                 jsb.whenReleased(button.whenReleasedCommand);

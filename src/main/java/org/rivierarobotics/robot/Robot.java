@@ -27,16 +27,19 @@ import org.rivierarobotics.driver.ButtonConfiguration;
 import org.rivierarobotics.driver.Controller;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.ControlMode;
+import org.rivierarobotics.util.Vector2D;
 
 public class Robot extends TimedRobot {
     public static Robot runningRobot;
     public ControlMode currentControlMode;
     public DriveTrain driveTrain;
     public Controller controller;
+    public Vector2D currentPosition;
 
     public Robot() {
         this.driveTrain = new DriveTrain();
         this.controller = new Controller();
+        this.currentPosition = new Vector2D();
         this.currentControlMode = ControlMode.SWERVE;
         runningRobot = this;
     }
@@ -59,6 +62,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         driveTrain.resetGyro();
+        driveTrain.resetDriveEncoders();
     }
 
     @Override
@@ -80,5 +84,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumberArray("Steering Powers", runningRobot.driveTrain.getAllPowers(false));
         SmartDashboard.putNumberArray("Drive Encoder Ticks", runningRobot.driveTrain.getAllValues(true, true));
         SmartDashboard.putNumberArray("Steering Encoder Ticks", runningRobot.driveTrain.getAllValues(true, false));
+        if (!runningRobot.driveTrain.getCurrentCommandName().equals("DriveControl")) {
+            SmartDashboard.putString("Current Command", runningRobot.driveTrain.getCurrentCommandName());
+        }
     }
 }
