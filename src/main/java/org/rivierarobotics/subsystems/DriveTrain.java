@@ -24,10 +24,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.rivierarobotics.commands.DriveControl;
-import org.rivierarobotics.util.DriveCalculation;
-import org.rivierarobotics.util.MathUtil;
-import org.rivierarobotics.util.MotorGroup;
-import org.rivierarobotics.util.RobotMap;
+import org.rivierarobotics.util.*;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -49,18 +46,15 @@ public class DriveTrain extends Subsystem {
         this.allModules = new SwerveModule[]{fr, fl, bl, br};
     }
 
-    public void setMappedValues(DriveCalculation.CalcType type, Map<MotorGroup, Double> powerMap) {
-        for (Map.Entry<MotorGroup, Double> pwrMap : powerMap.entrySet()) {
+    public void setMappedControlDirective(Map<MotorGroup, ControlDirective> powerMap) {
+        for (Map.Entry<MotorGroup, ControlDirective> pwrMap : powerMap.entrySet()) {
             SwerveModule aModule = getSwerveModule(pwrMap.getKey());
-            switch (type) {
-                case ANGLE: aModule.setSteerAngle(pwrMap.getValue()); break;
-                case SPEED: aModule.setDrivePower(pwrMap.getValue()); break;
-                default: throw new IllegalArgumentException("Invalid calculation type");
-            }
+            aModule.setDrivePower(pwrMap.getValue().getPower());
+            aModule.setSteerAngle(pwrMap.getValue().getAngle());
         }
     }
 
-    public void setAllPowers(double... ordered_pwrs) {
+    public void setOrderedPowers(double... ordered_pwrs) {
         for (int i = 0; i < ordered_pwrs.length; i++) {
             allModules[i].setDrivePower(ordered_pwrs[i]);
         }
@@ -72,7 +66,7 @@ public class DriveTrain extends Subsystem {
         }
     }
 
-    public void setAllAngles(double... ordered_angles) {
+    public void setOrderedAngles(double... ordered_angles) {
         for (int i = 0; i < ordered_angles.length; i++) {
             allModules[i].setSteerAngle(ordered_angles[i]);
         }

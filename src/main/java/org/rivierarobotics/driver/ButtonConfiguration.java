@@ -1,84 +1,19 @@
-/*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
- *
- * Copyright (c) Riviera Robotics <https://github.com/Team5818>
- * Copyright (c) contributors
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 package org.rivierarobotics.driver;
 
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.command.Command;
+import org.rivierarobotics.commands.*;
 import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.util.ControlMode;
 import org.rivierarobotics.util.FieldPosition;
 
-import java.lang.reflect.InvocationTargetException;
-
-public enum ButtonConfiguration {
-    FORWARD_ONE_FOOT(0, "DriveToFieldPosition",
-                             new Object[]{ FieldPosition.FORWARD_ONE_FOOT }),
-    SKEW_DIAGONAL_ONE_FOOT(1, "DriveToFieldPosition",
-                                   new Object[]{ FieldPosition.DIAGONAL_ONE_FOOT });
-
-    public boolean include = true;
-    public int buttonNum;
-    public Command whenPressedCommand, whenReleasedCommand;
-    ButtonConfiguration(int buttonNum, String whenPressedCommandName, String whenReleasedCommandName,
-                        Object[] whenPressedParameters, Object[] whenReleasedParameters) {
-        this.buttonNum = buttonNum;
-        this.whenPressedCommand = getCommand(whenPressedCommandName, whenPressedParameters);
-        if (whenReleasedParameters != null && whenReleasedParameters.length != 0) {
-            this.whenReleasedCommand = getCommand(whenReleasedCommandName, whenReleasedParameters);
-        } else {
-            this.whenReleasedCommand = null;
-        }
-    }
-
-    ButtonConfiguration(int buttonNum, String whenPressedCommandName, String whenReleasedCommandName,
-                        Object[] whenPressedParameters, Object[] whenReleasedParameters, boolean include) {
-        this(buttonNum, whenPressedCommandName, whenReleasedCommandName, whenPressedParameters, whenReleasedParameters);
-        this.include = include;
-    }
-
-    ButtonConfiguration(int buttonNum, String whenPressedCommandName, Object[] whenPressedParameters) {
-        this(buttonNum, whenPressedCommandName, "", whenPressedParameters, new Object[]{});
-    }
-
+public class ButtonConfiguration {
     public static void initButtons() {
-        for (ButtonConfiguration button : ButtonConfiguration.class.getEnumConstants()) {
-            JoystickButton jsb = new JoystickButton(Robot.runningRobot.controller.buttons, button.buttonNum);
-            jsb.whenPressed(button.whenPressedCommand);
-            if (button.whenReleasedCommand != null) {
-                jsb.whenReleased(button.whenReleasedCommand);
-            }
-        }
+        createButton(0).onPress(new ChangeControlMode(ControlMode.TANK));
+        createButton(1).onPress(new ChangeControlMode(ControlMode.SWERVE));
+        createButton(2).onPress(new DriveVector(FieldPosition.FORWARD_ONE_FOOT))
+                .onRelease(new DriveVector(FieldPosition.BACKWARD_ONE_FOOT));
     }
 
-    public static Command getCommand(String commandName, Object[] parameters) {
-        try {
-            Class<?>[] argArr = new Class<?>[parameters.length];
-            for (int i = 0; i < parameters.length; i++) {
-                argArr[i] = parameters[i].getClass();
-            }
-            return (Command) Class.forName("org.rivierarobotics.commands." + commandName)
-                    .getConstructor(argArr).newInstance(parameters);
-        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException |
-                IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-            return null;
-        }
+    private static JSBChain createButton(int num) {
+        return new JSBChain(Robot.runningRobot.controller.buttons, num);
     }
 }

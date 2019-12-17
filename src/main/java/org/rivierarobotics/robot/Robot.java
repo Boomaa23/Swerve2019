@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
 
     private void printShuffleboard() {
         SmartDashboard.putNumberArray("Drive Distances", runningRobot.driveTrain.getAllValues(false, true));
-        SmartDashboard.putNumberArray("Wheel Angles", runningRobot.driveTrain.getAllValues(false, false));
+        SmartDashboard.putNumberArray("Wheel Angles", runningRobot.driveTrain.getAllValues(true, false));
         SmartDashboard.putNumberArray("Drive Powers", runningRobot.driveTrain.getAllPowers(true));
         SmartDashboard.putNumberArray("Steering Powers", runningRobot.driveTrain.getAllPowers(false));
         SmartDashboard.putNumberArray("Drive Encoder Ticks", runningRobot.driveTrain.getAllValues(true, true));

@@ -23,14 +23,14 @@ package org.rivierarobotics.util;
 import org.rivierarobotics.util.DriveCalculation.*;
 
 public enum ControlMode {
-    SWERVE(Swerve.class),
-    TANK(Tank.class),
-    CRAB(Crab.class),
-    AUTOMOBILE(Automobile.class);
+    SWERVE(Swerve.CALCULATOR),
+    TANK(Tank.CALCULATOR),
+    CRAB(Crab.CALCULATOR),
+    AUTOMOBILE(Automobile.CALCULATOR);
 
-    public Class<?> controlClass;
+    public final DriveCalculator calculator;
 
-    ControlMode(Class<?> controlClass) {
-        this.controlClass = controlClass;
+    ControlMode(DriveCalculator calculator) {
+        this.calculator = calculator;
     }
 }

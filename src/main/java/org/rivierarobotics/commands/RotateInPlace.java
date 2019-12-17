@@ -44,7 +44,7 @@ public class RotateInPlace extends Command {
     @Override
     protected void initialize() {
         double wheelAngle = Math.atan(RobotMap.Dimensions.TRACKWIDTH / RobotMap.Dimensions.WHEELBASE);
-        driveTrain.setAllAngles(wheelAngle, 180 - wheelAngle, wheelAngle, 180 - wheelAngle);
+        driveTrain.setOrderedAngles(wheelAngle, 180 - wheelAngle, wheelAngle, 180 - wheelAngle);
         double currentAngle = driveTrain.getGyroAngle();
         pwr = (targetAngle - currentAngle) > (currentAngle + (360 - targetAngle)) ? pwr * -1 : pwr;
     }

@@ -23,6 +23,7 @@ package org.rivierarobotics.util;
 public enum FieldPosition {
     ORIGIN(0,0,0, CentricMode.FIELD),
     FORWARD_ONE_FOOT(0, 12, 270, CentricMode.ROBOT),
+    BACKWARD_ONE_FOOT(0, -12, 90, CentricMode.ROBOT),
     DIAGONAL_ONE_FOOT(Math.sqrt(2) / 2, Math.sqrt(2) / 2, 135, CentricMode.ROBOT);
 
     public final double endRotation;

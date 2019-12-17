@@ -31,9 +31,9 @@ import org.rivierarobotics.util.MotorGroup;
 
 public class SwerveModule {
     public static final double TICKS_TO_INCHES = 1, ANGLE_SCALE = 4096.0 / 360,
-            MAX_PID_STEER = 0.5, MAX_PID_DRIVE = 0.5;
+            MAX_PID_STEER = 0.25, MAX_PID_DRIVE = 0.25;
     private static final double d_kP = 0, d_kI = 0, d_kD = 0, d_kF = 0,
-            s_kP = 0, s_kI = 0, s_kD = 0, s_kF = 0;
+            s_kP = 0.0005, s_kI = 0, s_kD = 0, s_kF = 0.00046;
     private final WPI_TalonSRX steer;
     private final CANSparkMax drive;
     private final PIDController steerPID, drivePID;

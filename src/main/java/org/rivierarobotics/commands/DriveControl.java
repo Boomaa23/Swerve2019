@@ -24,12 +24,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import org.rivierarobotics.driver.CompositeJoystick;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.DriveCalculation.CalcType;
 import org.rivierarobotics.util.MotorGroup;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DriveControl extends Command {
     private DriveTrain driveTrain;
@@ -43,26 +38,12 @@ public class DriveControl extends Command {
 
     @Override
     protected void execute() {
-        driveTrain.setMappedValues(CalcType.SPEED, getValuesFromReflect(CalcType.SPEED));
-        driveTrain.setMappedValues(CalcType.ANGLE, getValuesFromReflect(CalcType.ANGLE));
-    }
-
-    @SuppressWarnings("unchecked")
-    private Map<MotorGroup, Double> getValuesFromReflect(CalcType type) {
-        try {
-            return (Map<MotorGroup, Double>) Robot.runningRobot.currentControlMode.controlClass
-                    .getMethod("calculate", CalcType.class, CompositeJoystick.class, MotorGroup[].class)
-                    .invoke(null, type, compositeJoystick, MotorGroup.class.getEnumConstants());
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
-            return new HashMap<>();
-        }
+        driveTrain.setMappedControlDirective(Robot.runningRobot.currentControlMode.calculator
+                .calculate(compositeJoystick, MotorGroup.values()));
     }
 
     @Override
     protected boolean isFinished() {
         return false;
     }
-
-
 }
