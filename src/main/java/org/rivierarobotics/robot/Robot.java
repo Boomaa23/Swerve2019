@@ -73,17 +73,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        driveTrain.stop();
         printShuffleboard();
     }
 
     private void printShuffleboard() {
-        SmartDashboard.putNumberArray("Drive Distances", runningRobot.driveTrain.getAllValues(false, true));
-        SmartDashboard.putNumberArray("Wheel Angles", runningRobot.driveTrain.getAllValues(true, false));
-        SmartDashboard.putNumberArray("Drive Powers", runningRobot.driveTrain.getAllPowers(true));
-        SmartDashboard.putNumberArray("Steering Powers", runningRobot.driveTrain.getAllPowers(false));
-        SmartDashboard.putNumberArray("Drive Encoder Ticks", runningRobot.driveTrain.getAllValues(true, true));
-        SmartDashboard.putNumberArray("Steering Encoder Ticks", runningRobot.driveTrain.getAllValues(true, false));
+        SmartDashboard.putNumber("gyro", runningRobot.driveTrain.getGyroAngle());
+        SmartDashboard.putNumber("Y", runningRobot.controller.composite.getY());
+        SmartDashboard.putNumber("X", runningRobot.controller.composite.getX());
+        SmartDashboard.putNumber("Z", runningRobot.controller.composite.getZ());
         if (!runningRobot.driveTrain.getCurrentCommandName().equals("DriveControl")) {
             SmartDashboard.putString("Current Command", runningRobot.driveTrain.getCurrentCommandName());
         }

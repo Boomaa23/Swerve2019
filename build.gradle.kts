@@ -1,7 +1,6 @@
 import com.techshroom.inciseblue.commonLib
-
 plugins {
-    id("org.rivierarobotics.gradlerioredux") version "0.6.0"
+    id("org.rivierarobotics.gradlerioredux") version "0.7.0"
 }
 
 gradleRioRedux {

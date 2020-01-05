@@ -20,62 +20,76 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.SpeedController;
-import org.rivierarobotics.util.AbstractPIDSource;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorGroup;
 
 public class SwerveModule {
-    public static final double TICKS_TO_INCHES = 1, ANGLE_SCALE = 4096.0 / 360,
-            MAX_PID_STEER = 0.25, MAX_PID_DRIVE = 0.25;
-    private static final double d_kP = 0, d_kI = 0, d_kD = 0, d_kF = 0,
-            s_kP = 0.0005, s_kI = 0, s_kD = 0, s_kF = 0.00046;
+    public static final double TICKS_TO_INCHES = 1, ANGLE_SCALE = 4096.0 / 360;
+    private static final double s_kP = 0.0005, s_kI = 0, s_kD = 0, MAX_PID_DRIVE = 0.5;
     private final WPI_TalonSRX steer;
     private final CANSparkMax drive;
-    private final PIDController steerPID, drivePID;
     private final MotorGroup groupId;
 
     public SwerveModule(MotorGroup groupId) {
         this.groupId = groupId;
         this.drive = new CANSparkMax(groupId.driveCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.steer = new WPI_TalonSRX(groupId.steerCANId);
-        this.drivePID = new PIDController(d_kP, d_kI, d_kD, d_kF,
-                new AbstractPIDSource(this::getDriveDistanceTicks), this::setRawSteerPower, 0.01);
-        this.steerPID = new PIDController(s_kP, s_kI, s_kD, s_kF,
-                new AbstractPIDSource(() -> MathUtil.moduloPositive(getSteerAngleTicks(), 4096)),
-                this::setRawDrivePower, 0.01);
 
-        steerPID.setInputRange(0, 4096);
-        steerPID.setContinuous(true);
-        steerPID.setOutputRange(-MAX_PID_STEER, MAX_PID_STEER);
-        drivePID.setOutputRange(-MAX_PID_DRIVE, MAX_PID_DRIVE);
+
+        steer.configFactoryDefault();
+        if(groupId == MotorGroup.FR) {
+            steer.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+            steer.setSensorPhase(true);
+        } else {
+            steer.configSelectedFeedbackSensor(FeedbackDevice.Analog);
+        }
+        steer.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10);
+        steer.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10);
+
+        steer.configNominalOutputForward(0);
+        steer.configNominalOutputReverse(0);
+        steer.configPeakOutputForward(0.5);
+        steer.configPeakOutputReverse(-0.5);
+
+        steer.selectProfileSlot(0, 0);
+        steer.config_kF(0, 0.2);
+        steer.config_kP(0, 0.3);
+        steer.config_kI(0,0);
+        steer.config_kD(0, 0);
+
+        steer.configMotionCruiseVelocity(2000);
+        steer.configMotionAcceleration(2000);
+        if(groupId.LRSide == MotorGroup.Side.LEFT) {
+            steer.setSensorPhase(true);
+        } else {
+            steer.setInverted(true);
+        }
+        steer.configFeedbackNotContinuous(true, 10);
     }
 
     public void setDrivePower(double pwr) {
-        if(pwr != 0 && drivePID.isEnabled()) { drivePID.disable(); }
         setRawDrivePower(pwr);
     }
 
     private void setRawDrivePower(double pwr) {
+        pwr = MathUtil.fitDeadband(pwr, 0.05);
+        SmartDashboard.putNumber(groupId.name() + " pwr", pwr);
         drive.set(pwr);
     }
 
-    private void setRawSteerPower(double pwr) {
-        steer.set(pwr);
-    }
-
-    public void setDriveDistance(double distance) {
-        drivePID.setSetpoint((distance / TICKS_TO_INCHES) + getDriveDistanceTicks());
-        drivePID.enable();
-    }
-
     public void setSteerAngle(double angle) {
-        steerPID.setSetpoint((angle * ANGLE_SCALE) + groupId.steerZeroTicks);
-        steerPID.enable();
+        angle *= ANGLE_SCALE;
+        SmartDashboard.putNumber(groupId.name() + " angleset_new", angle);
+        steer.set(ControlMode.MotionMagic, angle);
     }
 
     public int getDriveDistanceTicks() {
@@ -87,7 +101,12 @@ public class SwerveModule {
     }
 
     public int getSteerAngleTicks() {
-        return steer.getSensorCollection().getQuadraturePosition();
+        double ticks = steer.getSensorCollection().getAnalogInRaw() * 4;
+        if(groupId.equals(MotorGroup.FR)) {
+            ticks = steer.getSensorCollection().getPulseWidthPosition();
+        }
+        SmartDashboard.putNumber("module " + groupId.name(), ticks);
+        return (int) ticks;
     }
 
     public double getSteerAngle() {
@@ -102,8 +121,4 @@ public class SwerveModule {
         return steer;
     }
 
-    public PIDController getPIDController(SpeedController controller) {
-        return controller instanceof CANSparkMax && controller.equals(drive) ? drivePID
-                : controller instanceof WPI_TalonSRX && controller.equals(steer) ? steerPID : null;
-    }
 }

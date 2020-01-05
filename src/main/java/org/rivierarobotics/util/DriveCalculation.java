@@ -41,13 +41,13 @@ public class DriveCalculation {
         };
 
         private static void control(CompositeJoystick composite, double robotAngle) {
-            double fwd = composite.getY() * Math.cos(robotAngle) + composite.getX() * Math.sin(robotAngle);
-            double str = composite.getY() * Math.sin(robotAngle) + composite.getX() * Math.cos(robotAngle);
-            double r = Math.sqrt(Math.pow(Dimensions.WHEELBASE, 2) / Math.pow(Dimensions.TRACKWIDTH, 2));
-            A = str - composite.getZ() * (Dimensions.WHEELBASE / Dimensions.TRACKWIDTH);
-            B = str + composite.getZ() * (Dimensions.WHEELBASE / Dimensions.TRACKWIDTH);
-            C = fwd - composite.getZ() * (Dimensions.WHEELBASE / r);
-            D = fwd + composite.getZ() * (Dimensions.WHEELBASE / r);
+            double fwd = composite.getY();
+            double str = composite.getX();
+            double r = Math.sqrt(Math.pow(RobotMap.Dimensions.WHEELBASE, 2) + Math.pow(RobotMap.Dimensions.TRACKWIDTH, 2));
+            A = str - composite.getZ() * (RobotMap.Dimensions.WHEELBASE / r);
+            B = str + composite.getZ() * (RobotMap.Dimensions.WHEELBASE / r);
+            C = fwd - composite.getZ() * (RobotMap.Dimensions.TRACKWIDTH / r);
+            D = fwd + composite.getZ() * (RobotMap.Dimensions.TRACKWIDTH / r);
         }
 
         private static double calcWheelSpeed(MotorGroup group) {
@@ -57,7 +57,7 @@ public class DriveCalculation {
 
         private static double calcWheelAngle(MotorGroup group) {
             double[] calcIndexes = getCalcIndexes(group);
-            return Math.toDegrees(Math.atan2(calcIndexes[0], calcIndexes[1]));
+            return MathUtil.fitToDegCircle(Math.toDegrees(Math.atan2(calcIndexes[0], calcIndexes[1])));
         }
 
         private static double[] getCalcIndexes(MotorGroup group) {

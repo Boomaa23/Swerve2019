@@ -78,10 +78,8 @@ public class DriveTrain extends Subsystem {
         }
     }
 
-    public void setAllDriveDistances(double setpoint) {
-        for (SwerveModule module : allModules) {
-            module.setDriveDistance(setpoint);
-        }
+    public double getSteerTicks(MotorGroup group) {
+        return getSwerveModule(group).getSteerAngleTicks();
     }
 
     public double[] getAllValues(boolean isTicks, boolean isDistance) {
@@ -111,7 +109,7 @@ public class DriveTrain extends Subsystem {
     }
 
     public void resetGyro() {
-        gyro.setYaw(90);
+        gyro.setYaw(0);
     }
 
     public void resetDriveEncoders() {
@@ -127,15 +125,6 @@ public class DriveTrain extends Subsystem {
             case BL: return bl;
             case BR: return br;
             default: throw new InvalidParameterException("Motor group " + group.name() + " could not be found");
-        }
-    }
-
-    public void stop() {
-        for (SwerveModule module : allModules) {
-            for (SpeedController controller : Arrays.asList(module.getDrive(), module.getSteer())) {
-                module.getPIDController(controller).disable();
-                controller.stopMotor();
-            }
         }
     }
 

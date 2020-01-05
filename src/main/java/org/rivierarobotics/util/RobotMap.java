@@ -22,7 +22,7 @@ package org.rivierarobotics.util;
 
 public class RobotMap {
     public interface CANDevices {
-        int GYRO = 8;
+        int GYRO = 20;
     }
 
     public interface Joysticks {

@@ -30,6 +30,6 @@ public class Controller {
         this.left = new BoundedJoystick(RobotMap.Joysticks.LEFT_JS);
         this.right = new BoundedJoystick(RobotMap.Joysticks.RIGHT_JS);
         this.buttons = new BoundedJoystick(RobotMap.Joysticks.BUTTONS);
-        this.composite = new CompositeJoystick(left, right, left);
+        this.composite = new CompositeJoystick(right, right, right);
     }
 }

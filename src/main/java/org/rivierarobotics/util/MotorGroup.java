@@ -21,10 +21,10 @@
 package org.rivierarobotics.util;
 
 public enum MotorGroup {
-    FR(0, 1, 0, Side.FRONT, Side.RIGHT),
-    FL(2, 3, 0, Side.FRONT, Side.LEFT),
-    BL(4, 5, 0, Side.BACK, Side.LEFT),
-    BR(6, 7, 0, Side.BACK, Side.RIGHT);
+    FR(2, 1, 0, Side.FRONT, Side.RIGHT),
+    FL(4, 3, 0, Side.FRONT, Side.LEFT),
+    BL(6, 5, 0, Side.BACK, Side.LEFT),
+    BR(8, 7 , 0, Side.BACK, Side.RIGHT);
 
     public final int steerCANId, driveCANId, steerZeroTicks;
     public final Side FBSide, LRSide;

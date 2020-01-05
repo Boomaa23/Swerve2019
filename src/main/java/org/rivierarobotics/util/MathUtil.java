@@ -24,6 +24,10 @@ public class MathUtil {
     private static final double DEADBAND = 0.1;
 
     public static double fitDeadband(double val) {
+        return fitDeadband(val, DEADBAND);
+    }
+
+    public static double fitDeadband(double val, double deadband) {
         if (!(Math.abs(val) < DEADBAND)) {
             if (val > 0) {
                 if (val >= 1) {
@@ -48,5 +52,15 @@ public class MathUtil {
 
     public static int moduloPositive(int value, int modulo) {
         return (value % modulo) + (value < 0 ? modulo : 0);
+    }
+
+    public static double fitRange(double value, double minmax) {
+        if(value >= minmax) {
+            return minmax;
+        } else if(value <= -minmax) {
+            return -minmax;
+        } else {
+            return value;
+        }
     }
 }
