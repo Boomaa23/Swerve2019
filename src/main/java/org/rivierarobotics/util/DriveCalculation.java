@@ -28,6 +28,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DriveCalculation {
+    @FunctionalInterface
+    public interface DriveCalculator {
+        Map<MotorGroup, ControlDirective> calculate(CompositeJoystick composite, MotorGroup... groups);
+    }
+
     public static class Swerve {
         private static double A = 0, B = 0, C = 0, D = 0;
 
@@ -41,8 +46,9 @@ public class DriveCalculation {
         };
 
         private static void control(CompositeJoystick composite, double robotAngle) {
-            double fwd = composite.getY();
-            double str = composite.getX();
+            robotAngle = Math.toRadians(robotAngle);
+            double fwd = composite.getY() * Math.cos(robotAngle) + composite.getX() * Math.sin(robotAngle);
+            double str = composite.getX() * Math.sin(robotAngle) + composite.getY() * Math.cos(robotAngle);
             double r = Math.sqrt(Math.pow(RobotMap.Dimensions.WHEELBASE, 2) + Math.pow(RobotMap.Dimensions.TRACKWIDTH, 2));
             A = str - composite.getZ() * (RobotMap.Dimensions.WHEELBASE / r);
             B = str + composite.getZ() * (RobotMap.Dimensions.WHEELBASE / r);

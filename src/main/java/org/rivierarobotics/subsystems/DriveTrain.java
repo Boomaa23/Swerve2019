@@ -28,7 +28,6 @@ import org.rivierarobotics.util.*;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -76,10 +75,6 @@ public class DriveTrain extends Subsystem {
         for (SwerveModule module : allModules) {
             module.setSteerAngle(angle);
         }
-    }
-
-    public double getSteerTicks(MotorGroup group) {
-        return getSwerveModule(group).getSteerAngleTicks();
     }
 
     public double[] getAllValues(boolean isTicks, boolean isDistance) {

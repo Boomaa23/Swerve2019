@@ -20,9 +20,7 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -37,43 +35,28 @@ public class SwerveModule {
     private static final double s_kP = 0.0005, s_kI = 0, s_kD = 0, MAX_PID_DRIVE = 0.5;
     private final WPI_TalonSRX steer;
     private final CANSparkMax drive;
+    private final PIDController steerPID;
     private final MotorGroup groupId;
 
     public SwerveModule(MotorGroup groupId) {
         this.groupId = groupId;
         this.drive = new CANSparkMax(groupId.driveCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.steer = new WPI_TalonSRX(groupId.steerCANId);
+        this.steerPID = new PIDController(s_kP, s_kI, s_kD);
 
+        steerPID.enableContinuousInput(0, 4096);
 
         steer.configFactoryDefault();
-        if(groupId == MotorGroup.FR) {
-            steer.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
-            steer.setSensorPhase(true);
-        } else {
-            steer.configSelectedFeedbackSensor(FeedbackDevice.Analog);
-        }
-        steer.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10);
-        steer.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10);
+        steer.configFeedbackNotContinuous(false, 10);
+        steer.setNeutralMode(NeutralMode.Coast);
+        steer.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+        steer.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, 10);
 
-        steer.configNominalOutputForward(0);
-        steer.configNominalOutputReverse(0);
-        steer.configPeakOutputForward(0.5);
-        steer.configPeakOutputReverse(-0.5);
-
-        steer.selectProfileSlot(0, 0);
-        steer.config_kF(0, 0.2);
-        steer.config_kP(0, 0.3);
-        steer.config_kI(0,0);
-        steer.config_kD(0, 0);
-
-        steer.configMotionCruiseVelocity(2000);
-        steer.configMotionAcceleration(2000);
         if(groupId.LRSide == MotorGroup.Side.LEFT) {
             steer.setSensorPhase(true);
         } else {
             steer.setInverted(true);
         }
-        steer.configFeedbackNotContinuous(true, 10);
     }
 
     public void setDrivePower(double pwr) {
@@ -81,15 +64,16 @@ public class SwerveModule {
     }
 
     private void setRawDrivePower(double pwr) {
-        pwr = MathUtil.fitDeadband(pwr, 0.05);
         SmartDashboard.putNumber(groupId.name() + " pwr", pwr);
         drive.set(pwr);
     }
 
     public void setSteerAngle(double angle) {
         angle *= ANGLE_SCALE;
-        SmartDashboard.putNumber(groupId.name() + " angleset_new", angle);
-        steer.set(ControlMode.MotionMagic, angle);
+        SmartDashboard.putNumber(groupId.name() + " Setpoint", angle);
+        while(!steerPID.atSetpoint()) {
+            steer.set(MathUtil.fitRange(steerPID.calculate(getSteerAngleTicks()), MAX_PID_DRIVE));
+        }
     }
 
     public int getDriveDistanceTicks() {
@@ -101,11 +85,8 @@ public class SwerveModule {
     }
 
     public int getSteerAngleTicks() {
-        double ticks = steer.getSensorCollection().getAnalogInRaw() * 4;
-        if(groupId.equals(MotorGroup.FR)) {
-            ticks = steer.getSensorCollection().getPulseWidthPosition();
-        }
-        SmartDashboard.putNumber("module " + groupId.name(), ticks);
+        double ticks = steer.getSensorCollection().getPulseWidthPosition();
+        SmartDashboard.putNumber(groupId.name() + " Steer Ticks", ticks);
         return (int) ticks;
     }
 
@@ -121,4 +102,9 @@ public class SwerveModule {
         return steer;
     }
 
+    //TODO change spark max controller to drive PID
+    public PIDController getPIDController(SpeedController controller) {
+        return controller instanceof CANSparkMax && controller.equals(drive) ? steerPID
+                : controller instanceof WPI_TalonSRX && controller.equals(steer) ? steerPID : null;
+    }
 }
