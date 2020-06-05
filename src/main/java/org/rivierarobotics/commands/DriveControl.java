@@ -21,8 +21,6 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.driver.CompositeJoystick;
 import org.rivierarobotics.driver.CurrentControlMode;
 import org.rivierarobotics.inject.Input;

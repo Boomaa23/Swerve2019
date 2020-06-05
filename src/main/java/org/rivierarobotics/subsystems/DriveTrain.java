@@ -22,7 +22,6 @@ package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.rivierarobotics.commands.DriveControl;
-import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Corner;
 import org.rivierarobotics.util.ControlDirective;
 import org.rivierarobotics.util.MotorGroup;
@@ -66,6 +65,18 @@ public class DriveTrain extends Subsystem {
             SwerveModule aModule = getSwerveModule(pwrMap.getKey());
             aModule.setDrivePower(pwrMap.getValue().getPower());
             aModule.setSteerAngle(pwrMap.getValue().getAngle());
+        }
+    }
+
+    public void setAllDistances(double inches) {
+        for (SwerveModule module : allModules) {
+            module.setDriveDistance(inches);
+        }
+    }
+
+    public void setAllRelativeDistances(double inches) {
+        for (SwerveModule module : allModules) {
+            module.setRelativeDriveDistance(inches);
         }
     }
 
@@ -113,8 +124,6 @@ public class DriveTrain extends Subsystem {
         return powers;
     }
 
-
-
     public void resetDriveEncoders() {
         for (SwerveModule module : allModules) {
             module.getDrive().getEncoder().setPosition(0.0);
@@ -138,5 +147,12 @@ public class DriveTrain extends Subsystem {
     @Override
     protected void initDefaultCommand() {
         setDefaultCommand(command.get());
+    }
+
+    @Override
+    public void periodic() {
+        for (SwerveModule module : allModules) {
+            module.tickDrivePid();
+        }
     }
 }

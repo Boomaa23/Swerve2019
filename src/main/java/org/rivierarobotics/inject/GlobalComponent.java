@@ -22,6 +22,7 @@ package org.rivierarobotics.inject;
 
 import dagger.Component;
 import org.rivierarobotics.driver.ButtonConfiguration;
+import org.rivierarobotics.driver.CompositeJoystick;
 import org.rivierarobotics.driver.ControlsModule;
 import org.rivierarobotics.inject.CommandComponent.CCModule;
 import org.rivierarobotics.subsystems.DriveTrain;
@@ -42,6 +43,12 @@ public abstract class GlobalComponent {
     public abstract DriveTrain getDriveTrain();
 
     public abstract PigeonGyro getGyro();
+
+    @Input.Composite(Input.User.DRIVER)
+    public abstract CompositeJoystick getDriverJoystick();
+
+    @Input.Composite(Input.User.CODRIVER)
+    public abstract CompositeJoystick getCoDriverJoystick();
 
     public abstract ButtonConfiguration getButtonConfiguration();
 

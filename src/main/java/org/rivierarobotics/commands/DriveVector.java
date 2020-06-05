@@ -40,8 +40,8 @@ public class DriveVector extends InstantCommand {
 
     @Override
     public void execute() {
-        // TODO make this command actually work
         driveTrain.getCurrentPosition().add(Math.cos(angle) * distance, Math.sin(angle) * distance);
         driveTrain.setAllAngles(angle);
+        driveTrain.setAllRelativeDistances(distance);
     }
 }

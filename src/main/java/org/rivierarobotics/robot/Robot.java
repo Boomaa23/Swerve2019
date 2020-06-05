@@ -23,21 +23,13 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.driver.CompositeJoystick;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.inject.Input;
 
 public class Robot extends TimedRobot {
     private GlobalComponent globalComponent;
     private CommandComponent commandComponent;
-    private final CompositeJoystick driverJoystick;
-
-    public Robot(@Provided @Input.Composite(Input.User.DRIVER) CompositeJoystick driverJoystick) {
-        this.driverJoystick = driverJoystick;
-    }
 
     @Override
     public void robotInit() {
@@ -74,9 +66,9 @@ public class Robot extends TimedRobot {
 
     private void printShuffleboard() {
         SmartDashboard.putNumber("gyro", globalComponent.getGyro().getAngle());
-        SmartDashboard.putNumber("Y", driverJoystick.getY());
-        SmartDashboard.putNumber("X", driverJoystick.getX());
-        SmartDashboard.putNumber("Z", driverJoystick.getZ());
+        SmartDashboard.putNumber("Y", globalComponent.getDriverJoystick().getY());
+        SmartDashboard.putNumber("X", globalComponent.getDriverJoystick().getX());
+        SmartDashboard.putNumber("Z", globalComponent.getDriverJoystick().getZ());
         if (!globalComponent.getDriveTrain().getCurrentCommandName().equals("DriveControl")) {
             SmartDashboard.putString("Current Command", globalComponent.getDriveTrain().getCurrentCommandName());
         }

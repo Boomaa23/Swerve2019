@@ -26,8 +26,6 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.util.FieldPosition;
 
-import javax.inject.Inject;
-
 @GenerateCreator
 public class DriveToFieldPosition extends CommandGroup {
     public DriveToFieldPosition(@Provided DriveCommands drive, FieldPosition position) {
