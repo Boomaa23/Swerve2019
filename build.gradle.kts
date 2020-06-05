@@ -1,6 +1,7 @@
 import com.techshroom.inciseblue.commonLib
+
 plugins {
-    id("org.rivierarobotics.gradlerioredux") version "0.7.0"
+    id("org.rivierarobotics.gradlerioredux") version "0.7.8"
 }
 
 gradleRioRedux {
@@ -9,10 +10,14 @@ gradleRioRedux {
 }
 
 dependencies {
-	implementation("org.slf4j:slf4j-api:1.7.25")
-	commonLib("ch.qos.logback", "logback", "1.2.3") {
-		implementation(lib("classic"))
-		implementation(lib("core"))
+	implementation("org.rivierarobotics.apparjacktus:apparjacktus:0.1.1")
+	commonLib("net.octyl.apt-creator", "apt-creator", "0.1.4") {
+		compileOnly(lib("annotations"))
+		annotationProcessor(lib("processor"))
+	}
+	commonLib("com.google.dagger", "dagger", "2.25.4") {
+		implementation(lib())
+		annotationProcessor(lib("compiler"))
 	}
 }
 

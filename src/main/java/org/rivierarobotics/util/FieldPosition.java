@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -21,7 +21,7 @@
 package org.rivierarobotics.util;
 
 public enum FieldPosition {
-    ORIGIN(0,0,0, CentricMode.FIELD),
+    ORIGIN(0, 0, 0, CentricMode.FIELD),
     FORWARD_ONE_FOOT(0, 12, 270, CentricMode.ROBOT),
     BACKWARD_ONE_FOOT(0, -12, 90, CentricMode.ROBOT),
     DIAGONAL_ONE_FOOT(Math.sqrt(2) / 2, Math.sqrt(2) / 2, 135, CentricMode.ROBOT);

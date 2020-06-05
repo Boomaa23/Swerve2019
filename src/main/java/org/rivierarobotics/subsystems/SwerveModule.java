@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -20,43 +20,38 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorGroup;
+import org.rivierarobotics.util.MotorUtil;
+import org.rivierarobotics.util.PIDConfig;
 
 public class SwerveModule {
-    public static final double TICKS_TO_INCHES = 1, ANGLE_SCALE = 4096.0 / 360;
-    private static final double s_kP = 0.0005, s_kI = 0, s_kD = 0, MAX_PID_DRIVE = 0.5;
+    public static final double TICKS_TO_INCHES = 1;
+    public static final double ANGLE_SCALE = 4096.0 / 360;
+    private static final PIDConfig STEER_CONFIG = new PIDConfig(0.0005, 0, 0, 0, 0.5);
     private final WPI_TalonSRX steer;
     private final CANSparkMax drive;
-    private final PIDController steerPID;
     private final MotorGroup groupId;
 
     public SwerveModule(MotorGroup groupId) {
         this.groupId = groupId;
         this.drive = new CANSparkMax(groupId.driveCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.steer = new WPI_TalonSRX(groupId.steerCANId);
-        this.steerPID = new PIDController(s_kP, s_kI, s_kD);
-
-        steerPID.enableContinuousInput(0, 4096);
-
-        steer.configFactoryDefault();
-        steer.configFeedbackNotContinuous(false, 10);
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, STEER_CONFIG, 0, steer);
         steer.setNeutralMode(NeutralMode.Coast);
-        steer.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
-        steer.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, 10);
 
-        if(groupId.LRSide == MotorGroup.Side.LEFT) {
+        if (groupId.lrSide == MotorGroup.Side.LEFT) {
             steer.setSensorPhase(true);
         } else {
             steer.setInverted(true);
         }
+        // TODO implement drive PID
     }
 
     public void setDrivePower(double pwr) {
@@ -71,9 +66,7 @@ public class SwerveModule {
     public void setSteerAngle(double angle) {
         angle *= ANGLE_SCALE;
         SmartDashboard.putNumber(groupId.name() + " Setpoint", angle);
-        while(!steerPID.atSetpoint()) {
-            steer.set(MathUtil.fitRange(steerPID.calculate(getSteerAngleTicks()), MAX_PID_DRIVE));
-        }
+        steer.set(ControlMode.MotionMagic, angle);
     }
 
     public int getDriveDistanceTicks() {
@@ -100,11 +93,5 @@ public class SwerveModule {
 
     public WPI_TalonSRX getSteer() {
         return steer;
-    }
-
-    //TODO change spark max controller to drive PID
-    public PIDController getPIDController(SpeedController controller) {
-        return controller instanceof CANSparkMax && controller.equals(drive) ? steerPID
-                : controller instanceof WPI_TalonSRX && controller.equals(steer) ? steerPID : null;
     }
 }

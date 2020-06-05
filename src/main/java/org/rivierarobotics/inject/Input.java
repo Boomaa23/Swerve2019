@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -18,29 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.driver;
+package org.rivierarobotics.inject;
 
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.command.Command;
+import javax.inject.Qualifier;
 
-public class JSBChain extends JoystickButton {
-    public JSBChain(GenericHID joystick, int buttonNumber) {
-        super(joystick, buttonNumber);
+@Qualifier
+public @interface Input {
+    User user();
+    Type type();
+
+    enum User {
+        DRIVER,
+        CODRIVER
     }
 
-    public JSBChain onPress(Command cmd) {
-        this.whenPressed(cmd);
-        return this;
+    enum Type {
+        LEFT_JS,
+        RIGHT_JS,
+        BUTTONS
     }
 
-    public JSBChain onRelease(Command cmd) {
-        this.whenReleased(cmd);
-        return this;
-    }
-
-    public JSBChain onHold(Command cmd) {
-        this.whileHeld(cmd);
-        return this;
+    @Qualifier
+    @interface Composite {
+        User value();
     }
 }

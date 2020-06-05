@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -21,7 +21,8 @@
 package org.rivierarobotics.util;
 
 public class Vector2D {
-    private double x, y;
+    private double x;
+    private double y;
 
     public Vector2D(double x, double y) {
         this.x = x;
@@ -29,7 +30,7 @@ public class Vector2D {
     }
 
     public Vector2D() {
-        this(0,0);
+        this(0, 0);
     }
 
     public double getMagnitude() {

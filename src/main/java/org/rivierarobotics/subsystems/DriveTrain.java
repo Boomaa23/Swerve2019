@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -20,29 +20,45 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
-import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import org.rivierarobotics.commands.DriveControl;
-import org.rivierarobotics.util.*;
+import org.rivierarobotics.inject.CommandComponent;
+import org.rivierarobotics.inject.Corner;
+import org.rivierarobotics.util.ControlDirective;
+import org.rivierarobotics.util.MotorGroup;
+import org.rivierarobotics.util.Vector2D;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
 
+@Singleton
 public class DriveTrain extends Subsystem {
-    private final SwerveModule fr, fl, bl, br;
+    private final SwerveModule fr;
+    private final SwerveModule fl;
+    private final SwerveModule bl;
+    private final SwerveModule br;
+    private final Provider<DriveControl> command;
     private final SwerveModule[] allModules;
-    private final PigeonIMU gyro;
+    private Vector2D currentPosition;
 
-    public DriveTrain() {
-        this.fr = new SwerveModule(MotorGroup.FR);
-        this.fl = new SwerveModule(MotorGroup.FL);
-        this.bl = new SwerveModule(MotorGroup.BL);
-        this.br = new SwerveModule(MotorGroup.BR);
-        this.gyro = new PigeonIMU(RobotMap.CANDevices.GYRO);
-        this.allModules = new SwerveModule[]{fr, fl, bl, br};
+    @Inject
+    public DriveTrain(@Corner(MotorGroup.FL) SwerveModule fr,
+                      @Corner(MotorGroup.FL) SwerveModule fl,
+                      @Corner(MotorGroup.FL) SwerveModule bl,
+                      @Corner(MotorGroup.FL) SwerveModule br,
+                      Provider<DriveControl> command) {
+        this.fr = fr;
+        this.fl = fl;
+        this.bl = bl;
+        this.br = br;
+        this.command = command;
+        this.allModules = new SwerveModule[]{ fr, fl, bl, br };
+        this.currentPosition = new Vector2D();
     }
 
     public void setMappedControlDirective(Map<MotorGroup, ControlDirective> powerMap) {
@@ -53,9 +69,9 @@ public class DriveTrain extends Subsystem {
         }
     }
 
-    public void setOrderedPowers(double... ordered_pwrs) {
-        for (int i = 0; i < ordered_pwrs.length; i++) {
-            allModules[i].setDrivePower(ordered_pwrs[i]);
+    public void setOrderedPowers(double... orderedPwrs) {
+        for (int i = 0; i < orderedPwrs.length; i++) {
+            allModules[i].setDrivePower(orderedPwrs[i]);
         }
     }
 
@@ -65,9 +81,9 @@ public class DriveTrain extends Subsystem {
         }
     }
 
-    public void setOrderedAngles(double... ordered_angles) {
-        for (int i = 0; i < ordered_angles.length; i++) {
-            allModules[i].setSteerAngle(ordered_angles[i]);
+    public void setOrderedAngles(double... orderedAngles) {
+        for (int i = 0; i < orderedAngles.length; i++) {
+            allModules[i].setSteerAngle(orderedAngles[i]);
         }
     }
 
@@ -97,15 +113,7 @@ public class DriveTrain extends Subsystem {
         return powers;
     }
 
-    public double getGyroAngle() {
-        double[] ypr = new double[3];
-        gyro.getYawPitchRoll(ypr);
-        return MathUtil.fitToDegCircle(ypr[0]);
-    }
 
-    public void resetGyro() {
-        gyro.setYaw(0);
-    }
 
     public void resetDriveEncoders() {
         for (SwerveModule module : allModules) {
@@ -123,8 +131,12 @@ public class DriveTrain extends Subsystem {
         }
     }
 
+    public Vector2D getCurrentPosition() {
+        return currentPosition;
+    }
+
     @Override
     protected void initDefaultCommand() {
-        setDefaultCommand(new DriveControl());
+        setDefaultCommand(command.get());
     }
 }

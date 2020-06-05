@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -20,20 +20,37 @@
 
 package org.rivierarobotics.driver;
 
-import org.rivierarobotics.commands.*;
-import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.util.ControlMode;
-import org.rivierarobotics.util.FieldPosition;
+import org.rivierarobotics.inject.CommandComponent;
+import org.rivierarobotics.inject.Input;
+
+import javax.inject.Inject;
 
 public class ButtonConfiguration {
-    public static void initButtons() {
-        createButton(1).onPress(new ChangeControlMode(ControlMode.TANK));
-        createButton(2).onPress(new ChangeControlMode(ControlMode.SWERVE));
-        createButton(3).onPress(new DriveVector(FieldPosition.FORWARD_ONE_FOOT))
-                .onRelease(new DriveVector(FieldPosition.BACKWARD_ONE_FOOT));
+    private final BoundedJoystick driverLeft;
+    private final BoundedJoystick driverRight;
+    private final BoundedJoystick driverButtons;
+    private final BoundedJoystick coDriverLeft;
+    private final BoundedJoystick coDriverRight;
+    private final BoundedJoystick coDriverButtons;
+    private final CommandComponent cmds;
+
+    @Inject
+    public ButtonConfiguration(@Input(user = Input.User.DRIVER, type = Input.Type.LEFT_JS) BoundedJoystick driverLeft,
+                               @Input(user = Input.User.DRIVER, type = Input.Type.RIGHT_JS) BoundedJoystick driverRight,
+                               @Input(user = Input.User.DRIVER, type = Input.Type.BUTTONS) BoundedJoystick driverButtons,
+                               @Input(user = Input.User.CODRIVER, type = Input.Type.LEFT_JS) BoundedJoystick coDriverLeft,
+                               @Input(user = Input.User.CODRIVER, type = Input.Type.RIGHT_JS) BoundedJoystick coDriverRight,
+                               @Input(user = Input.User.CODRIVER, type = Input.Type.BUTTONS) BoundedJoystick coDriverButtons,
+                               CommandComponent.Builder component) {
+        this.driverLeft = driverLeft;
+        this.driverRight = driverRight;
+        this.driverButtons = driverButtons;
+        this.coDriverLeft = coDriverLeft;
+        this.coDriverRight = coDriverRight;
+        this.coDriverButtons = coDriverButtons;
+        this.cmds = component.build();
     }
 
-    private static JSBChain createButton(int num) {
-        return new JSBChain(Robot.runningRobot.controller.buttons, num);
+    public void initTeleop() {
     }
 }

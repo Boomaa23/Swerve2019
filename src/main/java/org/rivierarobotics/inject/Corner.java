@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -18,19 +18,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.inject;
 
-import org.rivierarobotics.util.DriveCalculation.*;
+import org.rivierarobotics.util.MotorGroup;
 
-public enum ControlMode {
-    SWERVE(Swerve.CALCULATOR),
-    TANK(Tank.CALCULATOR),
-    CRAB(Crab.CALCULATOR),
-    AUTOMOBILE(Automobile.CALCULATOR);
+import javax.inject.Qualifier;
 
-    public final DriveCalculator calculator;
-
-    ControlMode(DriveCalculator calculator) {
-        this.calculator = calculator;
-    }
+@Qualifier
+public @interface Corner {
+    MotorGroup value();
 }

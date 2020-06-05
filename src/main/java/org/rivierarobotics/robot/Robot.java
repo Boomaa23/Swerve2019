@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -23,30 +23,26 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.rivierarobotics.driver.ButtonConfiguration;
-import org.rivierarobotics.driver.Controller;
-import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.ControlMode;
-import org.rivierarobotics.util.Vector2D;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.driver.CompositeJoystick;
+import org.rivierarobotics.inject.CommandComponent;
+import org.rivierarobotics.inject.DaggerGlobalComponent;
+import org.rivierarobotics.inject.GlobalComponent;
+import org.rivierarobotics.inject.Input;
 
 public class Robot extends TimedRobot {
-    public static Robot runningRobot;
-    public ControlMode currentControlMode;
-    public DriveTrain driveTrain;
-    public Controller controller;
-    public Vector2D currentPosition;
+    private GlobalComponent globalComponent;
+    private CommandComponent commandComponent;
+    private final CompositeJoystick driverJoystick;
 
-    public Robot() {
-        this.driveTrain = new DriveTrain();
-        this.controller = new Controller();
-        this.currentPosition = new Vector2D();
-        this.currentControlMode = ControlMode.SWERVE;
-        runningRobot = this;
+    public Robot(@Provided @Input.Composite(Input.User.DRIVER) CompositeJoystick driverJoystick) {
+        this.driverJoystick = driverJoystick;
     }
 
     @Override
     public void robotInit() {
-        ButtonConfiguration.initButtons();
+        this.globalComponent = DaggerGlobalComponent.create();
+        this.commandComponent = globalComponent.getCommandComponentBuilder().build();
     }
 
     @Override
@@ -61,8 +57,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        driveTrain.resetGyro();
-        driveTrain.resetDriveEncoders();
+        globalComponent.getGyro().reset();
+        globalComponent.getDriveTrain().resetDriveEncoders();
     }
 
     @Override
@@ -77,12 +73,12 @@ public class Robot extends TimedRobot {
     }
 
     private void printShuffleboard() {
-        SmartDashboard.putNumber("gyro", runningRobot.driveTrain.getGyroAngle());
-        SmartDashboard.putNumber("Y", runningRobot.controller.composite.getY());
-        SmartDashboard.putNumber("X", runningRobot.controller.composite.getX());
-        SmartDashboard.putNumber("Z", runningRobot.controller.composite.getZ());
-        if (!runningRobot.driveTrain.getCurrentCommandName().equals("DriveControl")) {
-            SmartDashboard.putString("Current Command", runningRobot.driveTrain.getCurrentCommandName());
+        SmartDashboard.putNumber("gyro", globalComponent.getGyro().getAngle());
+        SmartDashboard.putNumber("Y", driverJoystick.getY());
+        SmartDashboard.putNumber("X", driverJoystick.getX());
+        SmartDashboard.putNumber("Z", driverJoystick.getZ());
+        if (!globalComponent.getDriveTrain().getCurrentCommandName().equals("DriveControl")) {
+            SmartDashboard.putString("Current Command", globalComponent.getDriveTrain().getCurrentCommandName());
         }
     }
 }

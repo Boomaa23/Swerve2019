@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -18,21 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.inject;
 
-public class RobotMap {
-    public interface CANDevices {
-        int GYRO = 20;
+import dagger.Module;
+import dagger.Subcomponent;
+import org.rivierarobotics.commands.DriveCommands;
+
+@Subcomponent
+public abstract class CommandComponent {
+    public abstract DriveCommands drive();
+
+    @Module(subcomponents = CommandComponent.class)
+    public interface CCModule {
     }
 
-    public interface Joysticks {
-        int LEFT_JS = 0;
-        int RIGHT_JS = 1;
-        int BUTTONS = 4;
-    }
-
-    public interface Dimensions {
-        double WHEELBASE = 1;
-        double TRACKWIDTH = 1;
+    @Subcomponent.Builder
+    public interface Builder {
+        CommandComponent build();
     }
 }

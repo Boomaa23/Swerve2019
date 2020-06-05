@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -21,25 +21,38 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.driver.CompositeJoystick;
-import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.driver.CurrentControlMode;
+import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.subsystems.PigeonGyro;
 import org.rivierarobotics.util.MotorGroup;
 
-public class DriveControl extends Command {
-    private DriveTrain driveTrain;
-    private CompositeJoystick compositeJoystick;
+import javax.inject.Inject;
 
-    public DriveControl() {
-        this.driveTrain = Robot.runningRobot.driveTrain;
-        this.compositeJoystick = Robot.runningRobot.controller.composite;
+public class DriveControl extends Command {
+    private final DriveTrain driveTrain;
+    private final PigeonGyro gyro;
+    private final CurrentControlMode controlMode;
+    private final CompositeJoystick joystick;
+
+    @Inject
+    public DriveControl(DriveTrain driveTrain,
+                        PigeonGyro gyro,
+                        CurrentControlMode controlMode,
+                        @Input.Composite(Input.User.DRIVER) CompositeJoystick joystick) {
+        this.driveTrain = driveTrain;
+        this.gyro = gyro;
+        this.controlMode = controlMode;
+        this.joystick = joystick;
         requires(driveTrain);
     }
 
     @Override
     protected void execute() {
-        driveTrain.setMappedControlDirective(Robot.runningRobot.currentControlMode.calculator
-                .calculate(compositeJoystick, MotorGroup.values()));
+        driveTrain.setMappedControlDirective(controlMode.get().calculator.calculate(joystick, gyro, MotorGroup.values()));
     }
 
     @Override

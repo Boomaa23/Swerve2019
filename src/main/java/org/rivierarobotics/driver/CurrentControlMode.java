@@ -18,30 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.driver;
 
-public class ControlDirective {
-    private double angle;
-    private double power;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-    public ControlDirective(double angle, double power) {
-        this.angle = angle;
-        this.power = power;
+@Singleton
+public class CurrentControlMode {
+    private ControlMode value;
+
+    @Inject
+    public CurrentControlMode() {
+        this.value = ControlMode.SWERVE;
     }
 
-    public double getAngle() {
-        return angle;
+    public ControlMode get() {
+        return value;
     }
 
-    public double getPower() {
-        return power;
-    }
-
-    public void setAngle(double angle) {
-        this.angle = angle;
-    }
-
-    public void setPower(double power) {
-        this.power = power;
+    public void set(ControlMode mode) {
+        this.value = mode;
     }
 }

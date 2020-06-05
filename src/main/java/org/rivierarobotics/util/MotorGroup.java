@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -24,17 +24,20 @@ public enum MotorGroup {
     FR(2, 1, 0, Side.FRONT, Side.RIGHT),
     FL(4, 3, 0, Side.FRONT, Side.LEFT),
     BL(6, 5, 0, Side.BACK, Side.LEFT),
-    BR(8, 7 , 0, Side.BACK, Side.RIGHT);
+    BR(8, 7, 0, Side.BACK, Side.RIGHT);
 
-    public final int steerCANId, driveCANId, steerZeroTicks;
-    public final Side FBSide, LRSide;
+    public final int steerCANId;
+    public final int driveCANId;
+    public final int steerZeroTicks;
+    public final Side fbSide;
+    public final Side lrSide;
 
-    MotorGroup(int steerCANId, int driveCANId, int steerZeroTicks, Side FBSide, Side LRSide) {
+    MotorGroup(int steerCANId, int driveCANId, int steerZeroTicks, Side fbSide, Side lrSide) {
         this.steerCANId = steerCANId;
         this.driveCANId = driveCANId;
         this.steerZeroTicks = steerZeroTicks;
-        this.FBSide = FBSide;
-        this.LRSide = LRSide;
+        this.fbSide = fbSide;
+        this.lrSide = lrSide;
     }
 
     public enum Side {

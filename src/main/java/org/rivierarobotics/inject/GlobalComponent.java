@@ -18,30 +18,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.inject;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
+import dagger.Component;
+import org.rivierarobotics.driver.ButtonConfiguration;
+import org.rivierarobotics.driver.ControlsModule;
+import org.rivierarobotics.inject.CommandComponent.CCModule;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.subsystems.PigeonGyro;
+import org.rivierarobotics.subsystems.SubsystemModule;
 
-@GenerateCreator
-public class DriveVector extends InstantCommand {
-    private final DriveTrain driveTrain;
-    private final double distance;
-    private final double angle;
+import javax.inject.Singleton;
 
-    public DriveVector(@Provided DriveTrain driveTrain, double distance, double angle) {
-        this.driveTrain = driveTrain;
-        this.distance = distance;
-        this.angle = angle;
-        requires(driveTrain);
+@Component(modules = {SubsystemModule.class, ControlsModule.class, CCModule.class})
+@Singleton
+public abstract class GlobalComponent {
+    public void robotInit() {
+        getDriveTrain();
+        getButtonConfiguration();
+        getCommandComponentBuilder();
     }
 
-    @Override
-    public void execute() {
-        // TODO make this command actually work
-        driveTrain.getCurrentPosition().add(Math.cos(angle) * distance, Math.sin(angle) * distance);
-        driveTrain.setAllAngles(angle);
-    }
+    public abstract DriveTrain getDriveTrain();
+
+    public abstract PigeonGyro getGyro();
+
+    public abstract ButtonConfiguration getButtonConfiguration();
+
+    public abstract CommandComponent.Builder getCommandComponentBuilder();
+
 }

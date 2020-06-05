@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -18,18 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.driver;
+package org.rivierarobotics.subsystems;
 
-import org.rivierarobotics.util.RobotMap;
+import com.ctre.phoenix.sensors.PigeonIMU;
+import org.rivierarobotics.util.MathUtil;
 
-public class Controller {
-    public final BoundedJoystick left, right, buttons;
-    public final CompositeJoystick composite;
+public class PigeonGyro extends PigeonIMU {
+    public PigeonGyro(int id) {
+        super(id);
+    }
 
-    public Controller() {
-        this.left = new BoundedJoystick(RobotMap.Joysticks.LEFT_JS);
-        this.right = new BoundedJoystick(RobotMap.Joysticks.RIGHT_JS);
-        this.buttons = new BoundedJoystick(RobotMap.Joysticks.BUTTONS);
-        this.composite = new CompositeJoystick(right, right, right);
+    public double getAngle() {
+        double[] ypr = new double[3];
+        super.getYawPitchRoll(ypr);
+        return MathUtil.fitToDegCircle(ypr[0]);
+    }
+
+    public void reset() {
+        super.setYaw(0);
     }
 }

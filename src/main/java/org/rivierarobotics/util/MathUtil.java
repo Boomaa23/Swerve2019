@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -22,6 +22,9 @@ package org.rivierarobotics.util;
 
 public class MathUtil {
     private static final double DEADBAND = 0.1;
+
+    private MathUtil() {
+    }
 
     public static double fitDeadband(double val) {
         return fitDeadband(val, DEADBAND);
@@ -55,9 +58,9 @@ public class MathUtil {
     }
 
     public static double fitRange(double value, double minmax) {
-        if(value >= minmax) {
+        if (value >= minmax) {
             return minmax;
-        } else if(value <= -minmax) {
+        } else if (value <= -minmax) {
             return -minmax;
         } else {
             return value;

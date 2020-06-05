@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -21,31 +21,32 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import org.rivierarobotics.robot.Robot;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.FieldPosition;
+import org.rivierarobotics.subsystems.PigeonGyro;
+import org.rivierarobotics.util.Dimensions;
 import org.rivierarobotics.util.MathUtil;
-import org.rivierarobotics.util.RobotMap;
 
+@GenerateCreator
 public class RotateInPlace extends Command {
-    private final DriveTrain driveTrain = Robot.runningRobot.driveTrain;
+    private final DriveTrain driveTrain;
+    private final PigeonGyro gyro;
     private final double targetAngle;
     private double pwr = 0.25;
 
-    public RotateInPlace(FieldPosition position) {
-        this(position.endRotation);
-    }
-
-    public RotateInPlace(double targetAngle) {
-        this.targetAngle = MathUtil.fitToDegCircle(targetAngle);
+    public RotateInPlace(@Provided DriveTrain driveTrain, @Provided PigeonGyro gyro, double degreesTargetAngle) {
+        this.driveTrain = driveTrain;
+        this.gyro = gyro;
+        this.targetAngle = MathUtil.fitToDegCircle(degreesTargetAngle);
         requires(driveTrain);
     }
 
     @Override
     protected void initialize() {
-        double wheelAngle = Math.atan(RobotMap.Dimensions.TRACKWIDTH / RobotMap.Dimensions.WHEELBASE);
+        double currentAngle = gyro.getAngle();
+        double wheelAngle = Math.atan(Dimensions.TRACKWIDTH / Dimensions.WHEELBASE);
         driveTrain.setOrderedAngles(wheelAngle, 180 - wheelAngle, wheelAngle, 180 - wheelAngle);
-        double currentAngle = driveTrain.getGyroAngle();
         pwr = (targetAngle - currentAngle) > (currentAngle + (360 - targetAngle)) ? pwr * -1 : pwr;
     }
 
@@ -61,6 +62,6 @@ public class RotateInPlace extends Command {
 
     @Override
     protected boolean isFinished() {
-        return Math.abs(driveTrain.getGyroAngle() - targetAngle) <= 5;
+        return Math.abs(gyro.getAngle() - targetAngle) <= 5;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -23,18 +23,23 @@ package org.rivierarobotics.driver;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class CompositeJoystick {
-    private BoundedJoystick x, y, z;
+    private final BoundedJoystick x;
+    private final BoundedJoystick y;
+    private final BoundedJoystick z;
+    private final BoundedJoystick buttons;
 
-    public CompositeJoystick(BoundedJoystick x, BoundedJoystick y, BoundedJoystick z) {
+    public CompositeJoystick(BoundedJoystick x, BoundedJoystick y, BoundedJoystick z, BoundedJoystick buttons) {
         this.x = x;
         this.y = y;
         this.z = z;
+        this.buttons = buttons;
     }
 
-    public CompositeJoystick(Joystick x, Joystick y, Joystick z) {
+    public CompositeJoystick(Joystick x, Joystick y, Joystick z, Joystick buttons) {
         this.x = (BoundedJoystick) x;
         this.y = (BoundedJoystick) y;
         this.z = (BoundedJoystick) z;
+        this.buttons = (BoundedJoystick) buttons;
     }
 
     public double getX() {
@@ -47,5 +52,9 @@ public class CompositeJoystick {
 
     public double getZ() {
         return z.getDimension('Z');
+    }
+
+    public BoundedJoystick getButtons() {
+        return buttons;
     }
 }

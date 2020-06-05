@@ -20,28 +20,46 @@
 
 package org.rivierarobotics.util;
 
-public class ControlDirective {
-    private double angle;
-    private double power;
+public class PIDConfig {
+    private final double kP;
+    private final double kI;
+    private final double kD;
+    private final double kF;
+    private final double pidRange;
 
-    public ControlDirective(double angle, double power) {
-        this.angle = angle;
-        this.power = power;
+    public PIDConfig(double kP, double kI, double kD, double kF, double pidRange) {
+        this.kP = kP;
+        this.kI = kI;
+        this.kD = kD;
+        this.kF = kF;
+        this.pidRange = pidRange;
     }
 
-    public double getAngle() {
-        return angle;
+    public PIDConfig(double kP, double kI, double kD, double kF) {
+        this.kP = kP;
+        this.kI = kI;
+        this.kD = kD;
+        this.kF = kF;
+        this.pidRange = 1.0;
     }
 
-    public double getPower() {
-        return power;
+    public double getP() {
+        return kP;
     }
 
-    public void setAngle(double angle) {
-        this.angle = angle;
+    public double getI() {
+        return kI;
     }
 
-    public void setPower(double power) {
-        this.power = power;
+    public double getD() {
+        return kD;
+    }
+
+    public double getF() {
+        return kF;
+    }
+
+    public double getRange() {
+        return pidRange;
     }
 }

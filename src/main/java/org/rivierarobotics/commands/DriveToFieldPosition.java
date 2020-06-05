@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -21,13 +21,18 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.TimedCommand;
+import edu.wpi.first.wpilibj.command.WaitCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.util.FieldPosition;
 
+import javax.inject.Inject;
+
+@GenerateCreator
 public class DriveToFieldPosition extends CommandGroup {
-    public DriveToFieldPosition(FieldPosition position) {
-        addSequential(new DriveVector(position));
-        addSequential(new TimedCommand(0.1));
-        addSequential(new RotateInPlace(position));
+    public DriveToFieldPosition(@Provided DriveCommands drive, FieldPosition position) {
+        addSequential(drive.driveVector(position));
+        addSequential(new WaitCommand(0.1));
+        addSequential(drive.rotateInPlace(position));
     }
 }

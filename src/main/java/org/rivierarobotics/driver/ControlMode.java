@@ -1,5 +1,5 @@
 /*
- * This file is part of Swerve2019, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Swerve2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -18,21 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.driver;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
-import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.util.ControlMode;
+import org.rivierarobotics.util.DriveCalculation;
 
-public class ChangeControlMode extends InstantCommand {
-    private final ControlMode mode;
+public enum ControlMode {
+    SWERVE(DriveCalculation.Swerve.CALCULATOR),
+    TANK(DriveCalculation.Tank.CALCULATOR),
+    CRAB(DriveCalculation.Crab.CALCULATOR),
+    AUTOMOBILE(DriveCalculation.Automobile.CALCULATOR);
 
-    public ChangeControlMode(ControlMode mode) {
-        this.mode = mode;
-    }
+    public final DriveCalculation.DriveCalculator calculator;
 
-    @Override
-    protected void execute() {
-        Robot.runningRobot.currentControlMode = mode;
+    ControlMode(DriveCalculation.DriveCalculator calculator) {
+        this.calculator = calculator;
     }
 }
