@@ -23,6 +23,7 @@ package org.rivierarobotics.subsystems;
 import dagger.Module;
 import dagger.Provides;
 import org.rivierarobotics.inject.Corner;
+import org.rivierarobotics.subsystems.drivetrain.SwerveModule;
 import org.rivierarobotics.util.MotorGroup;
 
 import javax.inject.Singleton;

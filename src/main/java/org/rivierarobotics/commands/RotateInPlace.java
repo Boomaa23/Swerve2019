@@ -23,10 +23,12 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.PigeonGyro;
+import org.rivierarobotics.subsystems.drivetrain.DriveTrain;
+import org.rivierarobotics.subsystems.drivetrain.SwerveData;
 import org.rivierarobotics.util.Dimensions;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.MotorMapped;
 
 @GenerateCreator
 public class RotateInPlace extends Command {
@@ -46,18 +48,18 @@ public class RotateInPlace extends Command {
     protected void initialize() {
         double currentAngle = gyro.getAngle();
         double wheelAngle = Math.atan(Dimensions.TRACKWIDTH / Dimensions.WHEELBASE);
-        driveTrain.setOrderedAngles(wheelAngle, 180 - wheelAngle, wheelAngle, 180 - wheelAngle);
+        driveTrain.setAll(SwerveData.ANGLE, new MotorMapped<>(wheelAngle, 180 - wheelAngle, wheelAngle, 180 - wheelAngle));
         pwr = (targetAngle - currentAngle) > (currentAngle + (360 - targetAngle)) ? pwr * -1 : pwr;
     }
 
     @Override
     protected void execute() {
-        driveTrain.setAllPowers(pwr);
+        driveTrain.setAll(SwerveData.POWER, MotorMapped.fromDouble(pwr), SwerveData.Submodule.DRIVE);
     }
 
     @Override
     protected void end() {
-        driveTrain.setAllPowers(0.0);
+        driveTrain.setAll(SwerveData.POWER, MotorMapped.fromDouble(0), SwerveData.Submodule.DRIVE);
     }
 
     @Override

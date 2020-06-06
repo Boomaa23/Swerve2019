@@ -25,9 +25,9 @@ import org.rivierarobotics.driver.ButtonConfiguration;
 import org.rivierarobotics.driver.CompositeJoystick;
 import org.rivierarobotics.driver.ControlsModule;
 import org.rivierarobotics.inject.CommandComponent.CCModule;
-import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.PigeonGyro;
 import org.rivierarobotics.subsystems.SubsystemModule;
+import org.rivierarobotics.subsystems.drivetrain.DriveTrain;
 
 import javax.inject.Singleton;
 

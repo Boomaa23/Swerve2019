@@ -24,8 +24,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import org.rivierarobotics.driver.CompositeJoystick;
 import org.rivierarobotics.driver.CurrentControlMode;
 import org.rivierarobotics.inject.Input;
-import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.PigeonGyro;
+import org.rivierarobotics.subsystems.drivetrain.DriveTrain;
 import org.rivierarobotics.util.MotorGroup;
 
 import javax.inject.Inject;

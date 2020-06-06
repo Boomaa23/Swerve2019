@@ -50,7 +50,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         globalComponent.getGyro().reset();
-        globalComponent.getDriveTrain().resetDriveEncoders();
     }
 
     @Override

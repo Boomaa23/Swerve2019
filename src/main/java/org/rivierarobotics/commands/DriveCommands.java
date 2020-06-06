@@ -39,8 +39,8 @@ public class DriveCommands {
         this.driveToFieldPositionCreator = driveToFieldPositionCreator;
     }
 
-    public DriveVector driveVector(double distance, double angle) {
-        return driveVectorCreator.create(distance, angle);
+    public DriveVector driveVector(double distanceMeters, double angle) {
+        return driveVectorCreator.create(distanceMeters, angle);
     }
 
     public DriveVector driveVector(Vector2D vector) {

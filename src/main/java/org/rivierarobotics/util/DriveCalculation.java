@@ -23,13 +23,10 @@ package org.rivierarobotics.util;
 import org.rivierarobotics.driver.CompositeJoystick;
 import org.rivierarobotics.subsystems.PigeonGyro;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class DriveCalculation {
     @FunctionalInterface
     public interface DriveCalculator {
-        Map<MotorGroup, ControlDirective> calculate(CompositeJoystick composite, PigeonGyro gyro, MotorGroup... groups);
+        MotorMapped<ControlDirective> calculate(CompositeJoystick composite, PigeonGyro gyro, MotorGroup... groups);
     }
 
     public static class Swerve {
@@ -40,7 +37,7 @@ public class DriveCalculation {
 
         public static final DriveCalculator CALCULATOR = (CompositeJoystick composite, PigeonGyro gyro, MotorGroup... groups) -> {
             control(composite, gyro.getAngle());
-            Map<MotorGroup, ControlDirective> calcs = new HashMap<>();
+            MotorMapped<ControlDirective> calcs = new MotorMapped<>();
             for (int i = 0; i < groups.length; i++) {
                 calcs.put(groups[i], new ControlDirective(calcWheelAngle(groups[i]), calcWheelSpeed(groups[i])));
             }
@@ -86,7 +83,7 @@ public class DriveCalculation {
 
     public static class Tank {
         public static final DriveCalculator CALCULATOR = (CompositeJoystick composite, PigeonGyro gyro, MotorGroup... groups) -> {
-            Map<MotorGroup, ControlDirective> calcs = new HashMap<>();
+            MotorMapped<ControlDirective> calcs = new MotorMapped<>();
             for (int i = 0; i < groups.length; i++) {
                 calcs.put(groups[i], new ControlDirective(0.0,
                         calcWheelSpeed(groups[i].lrSide, composite.getX(), composite.getY())));
@@ -126,7 +123,7 @@ public class DriveCalculation {
 
     public static class Automobile {
         public static final DriveCalculator CALCULATOR = (CompositeJoystick composite, PigeonGyro gyro, MotorGroup... groups) -> {
-            Map<MotorGroup, ControlDirective> baseCalc = Crab.CALCULATOR.calculate(composite, gyro, groups);
+            MotorMapped<ControlDirective> baseCalc = Crab.CALCULATOR.calculate(composite, gyro, groups);
             baseCalc.get(MotorGroup.BL).setAngle(90);
             baseCalc.get(MotorGroup.BR).setAngle(90);
             return baseCalc;
@@ -135,7 +132,7 @@ public class DriveCalculation {
 
     public static class Crab {
         public static final DriveCalculator CALCULATOR = (CompositeJoystick composite, PigeonGyro gyro, MotorGroup... groups) -> {
-            Map<MotorGroup, ControlDirective> calcs = new HashMap<>();
+            MotorMapped<ControlDirective> calcs = new MotorMapped<>();
             for (int i = 0; i < groups.length; i++) {
                 calcs.put(groups[i], new ControlDirective(calcWheelAngle(groups[i], composite), composite.getY()));
             }

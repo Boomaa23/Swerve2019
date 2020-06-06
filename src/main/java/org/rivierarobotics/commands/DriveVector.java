@@ -23,7 +23,9 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.subsystems.drivetrain.DriveTrain;
+import org.rivierarobotics.subsystems.drivetrain.SwerveData;
+import org.rivierarobotics.util.MotorMapped;
 
 @GenerateCreator
 public class DriveVector extends InstantCommand {
@@ -34,14 +36,13 @@ public class DriveVector extends InstantCommand {
     public DriveVector(@Provided DriveTrain driveTrain, double distance, double angle) {
         this.driveTrain = driveTrain;
         this.distance = distance;
-        this.angle = angle;
+        this.angle = Math.toRadians(angle);
         requires(driveTrain);
     }
 
     @Override
     public void execute() {
-        driveTrain.getCurrentPosition().add(Math.cos(angle) * distance, Math.sin(angle) * distance);
-        driveTrain.setAllAngles(angle);
-        driveTrain.setAllRelativeDistances(distance);
+        driveTrain.setAll(SwerveData.ANGLE, MotorMapped.fromDouble(angle));
+        driveTrain.setAll(SwerveData.DISTANCE_RELATIVE, MotorMapped.fromDouble(distance));
     }
 }
