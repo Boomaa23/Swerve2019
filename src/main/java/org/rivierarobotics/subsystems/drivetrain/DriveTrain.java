@@ -22,9 +22,17 @@ package org.rivierarobotics.subsystems.drivetrain;
 
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import org.rivierarobotics.commands.DriveControl;
 import org.rivierarobotics.inject.Corner;
+import org.rivierarobotics.subsystems.PigeonGyro;
 import org.rivierarobotics.util.ControlDirective;
+import org.rivierarobotics.util.Dimensions;
 import org.rivierarobotics.util.MotorGroup;
 import org.rivierarobotics.util.MotorMapped;
 
@@ -36,21 +44,37 @@ import javax.inject.Singleton;
 @Singleton
 public class DriveTrain extends Subsystem {
     private final Provider<DriveControl> command;
+    private final PigeonGyro gyro;
     private final MotorMapped<SwerveModule> allModules;
+    private final SwerveDriveOdometry odometry;
 
     @Inject
     public DriveTrain(@Corner(MotorGroup.FR) SwerveModule fr,
                       @Corner(MotorGroup.FL) SwerveModule fl,
                       @Corner(MotorGroup.BL) SwerveModule bl,
                       @Corner(MotorGroup.BR) SwerveModule br,
-                      Provider<DriveControl> command) {
+                      Provider<DriveControl> command,
+                      PigeonGyro gyro) {
         this.command = command;
+        this.gyro = gyro;
         this.allModules = new MotorMapped<>();
+        this.odometry = createOdometry();
 
         allModules.put(MotorGroup.FR, fr);
         allModules.put(MotorGroup.FL, fl);
         allModules.put(MotorGroup.BL, bl);
         allModules.put(MotorGroup.BR, br);
+    }
+
+    private SwerveDriveOdometry createOdometry() {
+        double loc = Dimensions.WHEELBASE / 2;
+        SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
+                new Translation2d(loc, loc),
+                new Translation2d(loc, -loc),
+                new Translation2d(-loc, loc),
+                new Translation2d(-loc, -loc)
+        );
+        return new SwerveDriveOdometry(kinematics, gyro.getRotation2d());
     }
 
     public void setMappedControlDirective(MotorMapped<ControlDirective> powerMap) {
@@ -88,6 +112,9 @@ public class DriveTrain extends Subsystem {
                     break;
                 case DISTANCE_TICKS:
                     values.put(group, (double) module.getDrive().getDistanceTicks());
+                    break;
+                case VELOCITY:
+                    values.put(group, module.getDrive().getVelocity());
                     break;
                 default:
                     throw new IllegalArgumentException("Type " + dataType + " could not be mapped correctly");
@@ -141,6 +168,19 @@ public class DriveTrain extends Subsystem {
         return allModules.get(group);
     }
 
+    public Pose2d getCurrentPosition() {
+        return odometry.getPoseMeters();
+    }
+
+    public void resetZeroPosition() {
+        gyro.doReset();
+        setFieldPosition(new Pose2d(), gyro.getRotation2d());
+    }
+
+    public void setFieldPosition(Pose2d pos, Rotation2d angle) {
+        odometry.resetPosition(pos, angle);
+    }
+
     @Override
     protected void initDefaultCommand() {
         setDefaultCommand(command.get());
@@ -148,8 +188,16 @@ public class DriveTrain extends Subsystem {
 
     @Override
     public void periodic() {
+        SwerveModuleState[] states = new SwerveModuleState[allModules.size()];
+        int i = 0;
         for (SwerveModule module : allModules.values()) {
             module.tick();
+            states[i] = module.getState();
+            i++;
         }
+        if (gyro.needsOdometryReset()) {
+            odometry.resetPosition(odometry.getPoseMeters(), gyro.getRotation2d());
+        }
+        odometry.update(gyro.getRotation2d(), states);
     }
 }

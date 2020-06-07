@@ -46,7 +46,7 @@ public class RotateInPlace extends Command {
 
     @Override
     protected void initialize() {
-        double currentAngle = gyro.getAngle();
+        double currentAngle = gyro.getWrappedAngle();
         double wheelAngle = Math.atan(Dimensions.TRACKWIDTH / Dimensions.WHEELBASE);
         driveTrain.setAll(SwerveData.ANGLE, new MotorMapped<>(wheelAngle, 180 - wheelAngle, wheelAngle, 180 - wheelAngle));
         pwr = (targetAngle - currentAngle) > (currentAngle + (360 - targetAngle)) ? pwr * -1 : pwr;
@@ -64,6 +64,6 @@ public class RotateInPlace extends Command {
 
     @Override
     protected boolean isFinished() {
-        return Math.abs(gyro.getAngle() - targetAngle) <= 5;
+        return Math.abs(gyro.getWrappedAngle() - targetAngle) <= 5;
     }
 }

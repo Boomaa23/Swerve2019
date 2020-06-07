@@ -36,7 +36,7 @@ public class DriveCalculation {
         private static double D = 0;
 
         public static final DriveCalculator CALCULATOR = (CompositeJoystick composite, PigeonGyro gyro, MotorGroup... groups) -> {
-            control(composite, gyro.getAngle());
+            control(composite, gyro.getWrappedAngle());
             MotorMapped<ControlDirective> calcs = new MotorMapped<>();
             for (int i = 0; i < groups.length; i++) {
                 calcs.put(groups[i], new ControlDirective(calcWheelAngle(groups[i]), calcWheelSpeed(groups[i])));

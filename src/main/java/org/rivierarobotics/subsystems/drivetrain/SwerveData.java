@@ -26,7 +26,8 @@ public enum SwerveData {
     ANGLE_TICKS(Action.GET, Submodule.STEER),
     DISTANCE(Submodule.DRIVE),
     DISTANCE_TICKS(Action.GET, Submodule.DRIVE),
-    DISTANCE_RELATIVE(Action.SET, Submodule.DRIVE);
+    DISTANCE_RELATIVE(Action.SET, Submodule.DRIVE),
+    VELOCITY(Action.GET, Submodule.DRIVE);
 
     private final Action[] allowedActions;
     private final Submodule[] allowedSubmodules;

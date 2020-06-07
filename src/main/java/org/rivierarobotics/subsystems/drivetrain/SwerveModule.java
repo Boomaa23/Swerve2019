@@ -20,6 +20,8 @@
 
 package org.rivierarobotics.subsystems.drivetrain;
 
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import org.rivierarobotics.util.MotorGroup;
 
 public class SwerveModule {
@@ -31,6 +33,10 @@ public class SwerveModule {
         this.groupId = groupId;
         this.drive = new DriveSubmodule(groupId);
         this.steer = new SteerSubmodule(groupId);
+    }
+
+    public SwerveModuleState getState() {
+        return new SwerveModuleState(drive.getVelocity(), Rotation2d.fromDegrees(steer.getAngle()));
     }
 
     public MotorGroup getGroup() {

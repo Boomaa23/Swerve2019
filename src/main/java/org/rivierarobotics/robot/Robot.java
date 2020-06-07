@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        globalComponent.getGyro().reset();
+        globalComponent.getGyro().needsOdometryReset();
     }
 
     @Override
@@ -64,7 +64,7 @@ public class Robot extends TimedRobot {
     }
 
     private void printShuffleboard() {
-        SmartDashboard.putNumber("gyro", globalComponent.getGyro().getAngle());
+        SmartDashboard.putNumber("gyro", globalComponent.getGyro().getWrappedAngle());
         SmartDashboard.putNumber("Y", globalComponent.getDriverJoystick().getY());
         SmartDashboard.putNumber("X", globalComponent.getDriverJoystick().getX());
         SmartDashboard.putNumber("Z", globalComponent.getDriverJoystick().getZ());

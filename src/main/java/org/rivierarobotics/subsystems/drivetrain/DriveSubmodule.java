@@ -23,6 +23,7 @@ package org.rivierarobotics.subsystems.drivetrain;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import org.rivierarobotics.util.Dimensions;
 import org.rivierarobotics.util.MotorGroup;
 import org.rivierarobotics.util.PIDConfig;
 
@@ -67,6 +68,14 @@ public class DriveSubmodule implements SwerveSubmodule {
 
     public double getDistance() {
         return getDistanceTicks() / TICKS_PER_METER;
+    }
+
+    public double getVelocity() {
+        return getRPM() * 2 * Math.PI * Dimensions.WHEEL_RADIUS / 60;
+    }
+
+    private double getRPM() {
+        return drive.getEncoder().getVelocity();
     }
 
     public void tickDrivePid() {

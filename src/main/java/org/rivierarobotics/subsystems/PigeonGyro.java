@@ -21,9 +21,12 @@
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.sensors.PigeonIMU;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import org.rivierarobotics.util.MathUtil;
 
 public class PigeonGyro extends PigeonIMU {
+    private boolean needsOdometryReset = false;
+
     public PigeonGyro(int id) {
         super(id);
     }
@@ -31,10 +34,27 @@ public class PigeonGyro extends PigeonIMU {
     public double getAngle() {
         double[] ypr = new double[3];
         super.getYawPitchRoll(ypr);
-        return MathUtil.fitToDegCircle(ypr[0]);
+        return ypr[0];
     }
 
-    public void reset() {
+    public double getWrappedAngle() {
+        return MathUtil.fitToDegCircle(getAngle());
+    }
+
+    public Rotation2d getRotation2d() {
+        return Rotation2d.fromDegrees(getAngle());
+    }
+
+    public void doReset() {
+        needsOdometryReset = true;
         super.setYaw(0);
+    }
+
+    public boolean needsOdometryReset() {
+        if (needsOdometryReset) {
+            needsOdometryReset = false;
+            return true;
+        }
+        return false;
     }
 }
