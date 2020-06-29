@@ -62,8 +62,7 @@ public class SteerSubmodule implements SwerveSubmodule {
     }
 
     public int getAngleTicks() {
-        double ticks = steer.getSensorCollection().getPulseWidthPosition();
-        return (int) ticks;
+        return steer.getSensorCollection().getPulseWidthPosition();
     }
 
     public double getAngle() {

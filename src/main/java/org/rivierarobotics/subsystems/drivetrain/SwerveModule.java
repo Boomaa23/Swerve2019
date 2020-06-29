@@ -50,8 +50,4 @@ public class SwerveModule {
     public SteerSubmodule getSteer() {
         return steer;
     }
-
-    public void tick() {
-        drive.tickDrivePid();
-    }
 }
