@@ -20,8 +20,10 @@
 
 package org.rivierarobotics.driver;
 
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.util.FieldPosition;
 
 import javax.inject.Inject;
 
@@ -52,5 +54,13 @@ public class ButtonConfiguration {
     }
 
     public void initTeleop() {
+        new JoystickButton(driverButtons, 12)
+                .whenPressed(cmds.drive().driveVector(FieldPosition.FORWARD_ONE_FOOT));
+        new JoystickButton(driverButtons, 11)
+                .whenPressed(cmds.drive().driveVector(FieldPosition.BACKWARD_ONE_FOOT));
+        new JoystickButton(driverButtons, 10)
+                .whenPressed(cmds.drive().driveToFieldPosition(FieldPosition.DIAGONAL_ONE_FOOT));
+        new JoystickButton(driverButtons, 9)
+                .whenPressed(cmds.drive().driveToFieldPosition(FieldPosition.ORIGIN));
     }
 }

@@ -38,8 +38,20 @@ public class DriveCalculation {
         public static final DriveCalculator CALCULATOR = (CompositeJoystick composite, PigeonGyro gyro, MotorGroup... groups) -> {
             control(composite, gyro.getWrappedAngle());
             MotorMapped<ControlDirective> calcs = new MotorMapped<>();
-            for (int i = 0; i < groups.length; i++) {
-                calcs.put(groups[i], new ControlDirective(calcWheelAngle(groups[i]), calcWheelSpeed(groups[i])));
+            double max = -1;
+            for (MotorGroup group : groups) {
+                double[] calcIndexes = getCalcIndexes(group);
+                double speed = Math.sqrt((calcIndexes[0] * calcIndexes[0]) + (calcIndexes[1] * calcIndexes[1]));
+                double angle = MathUtil.fitToDegCircle(Math.toDegrees(Math.atan2(calcIndexes[0], calcIndexes[1])));
+                calcs.put(group, new ControlDirective(angle, speed));
+                if (speed > max) {
+                    max = speed;
+                }
+            }
+            if (max > 1) {
+                for (ControlDirective directive : calcs.values()) {
+                    directive.setPower(directive.getPower() / max);
+                }
             }
             return calcs;
         };
@@ -48,21 +60,11 @@ public class DriveCalculation {
             robotAngle = Math.toRadians(robotAngle);
             double fwd = composite.getY() * Math.cos(robotAngle) + composite.getX() * Math.sin(robotAngle);
             double str = composite.getX() * Math.sin(robotAngle) + composite.getY() * Math.cos(robotAngle);
-            double r = Math.sqrt(Math.pow(Dimensions.WHEELBASE, 2) + Math.pow(Dimensions.TRACKWIDTH, 2));
+            double r = Math.sqrt((Dimensions.WHEELBASE * Dimensions.WHEELBASE) + (Dimensions.TRACKWIDTH * Dimensions.TRACKWIDTH));
             A = str - composite.getZ() * (Dimensions.WHEELBASE / r);
             B = str + composite.getZ() * (Dimensions.WHEELBASE / r);
             C = fwd - composite.getZ() * (Dimensions.TRACKWIDTH / r);
             D = fwd + composite.getZ() * (Dimensions.TRACKWIDTH / r);
-        }
-
-        private static double calcWheelSpeed(MotorGroup group) {
-            double[] calcIndexes = getCalcIndexes(group);
-            return Math.sqrt(Math.pow(calcIndexes[0], 2) + Math.pow(calcIndexes[1], 2));
-        }
-
-        private static double calcWheelAngle(MotorGroup group) {
-            double[] calcIndexes = getCalcIndexes(group);
-            return MathUtil.fitToDegCircle(Math.toDegrees(Math.atan2(calcIndexes[0], calcIndexes[1])));
         }
 
         private static double[] getCalcIndexes(MotorGroup group) {
@@ -84,9 +86,9 @@ public class DriveCalculation {
     public static class Tank {
         public static final DriveCalculator CALCULATOR = (CompositeJoystick composite, PigeonGyro gyro, MotorGroup... groups) -> {
             MotorMapped<ControlDirective> calcs = new MotorMapped<>();
-            for (int i = 0; i < groups.length; i++) {
-                calcs.put(groups[i], new ControlDirective(0.0,
-                        calcWheelSpeed(groups[i].lrSide, composite.getX(), composite.getY())));
+            for (MotorGroup group : groups) {
+                calcs.put(group, new ControlDirective(0.0,
+                        calcWheelSpeed(group.lrSide, composite.getX(), composite.getY())));
             }
             return calcs;
         };
@@ -133,8 +135,8 @@ public class DriveCalculation {
     public static class Crab {
         public static final DriveCalculator CALCULATOR = (CompositeJoystick composite, PigeonGyro gyro, MotorGroup... groups) -> {
             MotorMapped<ControlDirective> calcs = new MotorMapped<>();
-            for (int i = 0; i < groups.length; i++) {
-                calcs.put(groups[i], new ControlDirective(calcWheelAngle(groups[i], composite), composite.getY()));
+            for (MotorGroup group : groups) {
+                calcs.put(group, new ControlDirective(calcWheelAngle(group, composite), composite.getY()));
             }
             return calcs;
         };

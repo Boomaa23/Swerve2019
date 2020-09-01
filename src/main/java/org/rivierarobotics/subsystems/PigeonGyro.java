@@ -50,7 +50,7 @@ public class PigeonGyro extends PigeonIMU {
         super.setYaw(0);
     }
 
-    public boolean needsOdometryReset() {
+    public boolean requireOdometryReset() {
         if (needsOdometryReset) {
             needsOdometryReset = false;
             return true;

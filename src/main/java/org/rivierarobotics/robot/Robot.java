@@ -22,10 +22,19 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import org.rivierarobotics.driver.CompositeJoystick;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
+import org.rivierarobotics.subsystems.drivetrain.DriveTrain;
+import org.rivierarobotics.subsystems.drivetrain.SwerveData;
+import org.rivierarobotics.util.MotorGroup;
+import org.rivierarobotics.util.MotorMapped;
+import org.rivierarobotics.util.RSTab;
+import org.rivierarobotics.util.RobotShuffleboard;
+
+import java.util.Map;
 
 public class Robot extends TimedRobot {
     private GlobalComponent globalComponent;
@@ -35,6 +44,11 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         this.globalComponent = DaggerGlobalComponent.create();
         this.commandComponent = globalComponent.getCommandComponentBuilder().build();
+        globalComponent.robotInit();
+    }
+
+    @Override
+    public void robotPeriodic() {
     }
 
     @Override
@@ -49,7 +63,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        globalComponent.getGyro().needsOdometryReset();
+        globalComponent.getGyro().requireOdometryReset();
+        globalComponent.getButtonConfiguration().initTeleop();
     }
 
     @Override
@@ -59,17 +74,44 @@ public class Robot extends TimedRobot {
     }
 
     @Override
+    public void disabledInit() {
+    }
+
+    @Override
     public void disabledPeriodic() {
         printShuffleboard();
     }
 
     private void printShuffleboard() {
-        SmartDashboard.putNumber("gyro", globalComponent.getGyro().getWrappedAngle());
-        SmartDashboard.putNumber("Y", globalComponent.getDriverJoystick().getY());
-        SmartDashboard.putNumber("X", globalComponent.getDriverJoystick().getX());
-        SmartDashboard.putNumber("Z", globalComponent.getDriverJoystick().getZ());
-        if (!globalComponent.getDriveTrain().getCurrentCommandName().equals("DriveControl")) {
-            SmartDashboard.putString("Current Command", globalComponent.getDriveTrain().getCurrentCommandName());
+        RobotShuffleboard shuffleboard = globalComponent.getShuffleboard();
+        RSTab generalTab = shuffleboard.getTab("General");
+        DriveTrain dt = globalComponent.getDriveTrain();
+        CompositeJoystick js = globalComponent.getDriverJoystick();
+        generalTab.setEntry("JS X", js.getX());
+        generalTab.setEntry("JS Y", js.getY());
+        generalTab.setEntry("JS Z", js.getZ());
+
+        generalTab.setEntry("Gyro", globalComponent.getGyro().getWrappedAngle());
+        Pose2d currentPosition = dt.getCurrentPosition();
+        generalTab.setEntry("Pos X", currentPosition.getTranslation().getX());
+        generalTab.setEntry("Pos Y", currentPosition.getTranslation().getY());
+        generalTab.setEntry("Pos Rotation", currentPosition.getRotation().getDegrees());
+
+        String currentCommandName = dt.getCurrentCommandName();
+        if (!currentCommandName.equals("DriveControl")) {
+            generalTab.setEntry("Current Command", currentCommandName);
+        }
+        generalTab.setEntry("Control Mode", globalComponent.getCurrentControlMode().get().name());
+
+        RSTab motorTab = shuffleboard.getTab("Motors");
+        printAll(dt.getAll(SwerveData.POWER), "Speed", motorTab);
+        printAll(dt.getAll(SwerveData.ANGLE), "Angle", motorTab);
+        printAll(dt.getAll(SwerveData.ANGLE_TICKS), "Angle Ticks", motorTab);
+    }
+
+    private void printAll(MotorMapped<Double> data, String name, RSTab tab) {
+        for (Map.Entry<MotorGroup, Double> dataEntry : data.entrySet()) {
+            tab.setEntry(dataEntry.getKey().name() + " " + name, dataEntry.getValue());
         }
     }
 }

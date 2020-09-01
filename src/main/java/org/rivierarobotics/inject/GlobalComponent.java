@@ -24,10 +24,12 @@ import dagger.Component;
 import org.rivierarobotics.driver.ButtonConfiguration;
 import org.rivierarobotics.driver.CompositeJoystick;
 import org.rivierarobotics.driver.ControlsModule;
+import org.rivierarobotics.driver.CurrentControlMode;
 import org.rivierarobotics.inject.CommandComponent.CCModule;
 import org.rivierarobotics.subsystems.PigeonGyro;
 import org.rivierarobotics.subsystems.SubsystemModule;
 import org.rivierarobotics.subsystems.drivetrain.DriveTrain;
+import org.rivierarobotics.util.RobotShuffleboard;
 
 import javax.inject.Singleton;
 
@@ -36,8 +38,13 @@ import javax.inject.Singleton;
 public abstract class GlobalComponent {
     public void robotInit() {
         getDriveTrain();
+        getGyro();
+        getDriverJoystick();
+        getCoDriverJoystick();
+        getCurrentControlMode();
         getButtonConfiguration();
         getCommandComponentBuilder();
+        getShuffleboard();
     }
 
     public abstract DriveTrain getDriveTrain();
@@ -50,8 +57,11 @@ public abstract class GlobalComponent {
     @Input.Composite(Input.User.CODRIVER)
     public abstract CompositeJoystick getCoDriverJoystick();
 
+    public abstract CurrentControlMode getCurrentControlMode();
+
     public abstract ButtonConfiguration getButtonConfiguration();
 
     public abstract CommandComponent.Builder getCommandComponentBuilder();
 
+    public abstract RobotShuffleboard getShuffleboard();
 }

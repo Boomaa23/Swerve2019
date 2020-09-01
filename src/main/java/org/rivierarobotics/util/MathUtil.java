@@ -50,7 +50,7 @@ public class MathUtil {
     }
 
     public static double fitToDegCircle(double angle) {
-        return angle < 0 ? (360 - Math.abs(angle)) % 360 : angle % 360;
+        return angle < 0 ? (360 - (Math.abs(angle) % 360)) : angle % 360;
     }
 
     public static int moduloPositive(int value, int modulo) {

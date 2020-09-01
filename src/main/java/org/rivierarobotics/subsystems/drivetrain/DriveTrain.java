@@ -194,7 +194,7 @@ public class DriveTrain extends Subsystem {
             states[i] = module.getState();
             i++;
         }
-        if (gyro.needsOdometryReset()) {
+        if (gyro.requireOdometryReset()) {
             odometry.resetPosition(odometry.getPoseMeters(), gyro.getRotation2d());
         }
         odometry.update(gyro.getRotation2d(), states);
