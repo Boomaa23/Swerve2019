@@ -191,6 +191,7 @@ public class DriveTrain extends Subsystem {
         SwerveModuleState[] states = new SwerveModuleState[allModules.size()];
         int i = 0;
         for (SwerveModule module : allModules.values()) {
+            module.getEstimator().update();
             states[i] = module.getState();
             i++;
         }

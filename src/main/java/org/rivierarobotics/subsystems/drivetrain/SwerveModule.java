@@ -23,16 +23,19 @@ package org.rivierarobotics.subsystems.drivetrain;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import org.rivierarobotics.util.MotorGroup;
+import org.rivierarobotics.util.StateEstimator;
 
 public class SwerveModule {
     private final MotorGroup groupId;
     private final DriveSubmodule drive;
     private final SteerSubmodule steer;
+    private final StateEstimator estimator;
 
     public SwerveModule(MotorGroup groupId) {
         this.groupId = groupId;
         this.drive = new DriveSubmodule(groupId);
         this.steer = new SteerSubmodule(groupId);
+        this.estimator = new StateEstimator(groupId);
     }
 
     public SwerveModuleState getState() {
@@ -49,5 +52,9 @@ public class SwerveModule {
 
     public SteerSubmodule getSteer() {
         return steer;
+    }
+
+    public StateEstimator getEstimator() {
+        return estimator;
     }
 }
