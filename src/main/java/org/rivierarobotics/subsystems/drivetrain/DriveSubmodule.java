@@ -80,6 +80,10 @@ public class DriveSubmodule implements SwerveSubmodule {
         return drive.getEncoder().getVelocity();
     }
 
+    public double getPower() {
+        return drive.get();
+    }
+
     public void tickPID() {
         if (pid.getSelectedMode() == MultiPID.Mode.POSITION) {
             setRawPower(pid.calculatePos(getDistanceTicks()));

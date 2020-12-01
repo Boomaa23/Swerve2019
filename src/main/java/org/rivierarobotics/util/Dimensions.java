@@ -22,6 +22,7 @@ package org.rivierarobotics.util;
 
 // All dimensions in meters
 public interface Dimensions {
+    //TODO update dimensions (all)
     double WHEELBASE = 1;
     double TRACKWIDTH = 1;
     double WHEEL_RADIUS = 0.2;

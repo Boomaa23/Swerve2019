@@ -21,7 +21,7 @@
 package org.rivierarobotics.subsystems.drivetrain;
 
 public enum SwerveData {
-    POWER(Action.SET),
+    POWER(Action.GET, Action.SET),
     ANGLE(Submodule.STEER),
     ANGLE_TICKS(Action.GET, Submodule.STEER),
     DISTANCE(Submodule.DRIVE),

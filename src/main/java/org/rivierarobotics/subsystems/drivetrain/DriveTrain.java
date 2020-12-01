@@ -101,6 +101,9 @@ public class DriveTrain extends Subsystem {
             MotorGroup group = moduleEntry.getKey();
             SwerveModule module = moduleEntry.getValue();
             switch (dataType) {
+                case POWER:
+                    values.put(group, module.getDrive().getPower());
+                    break;
                 case ANGLE:
                     values.put(group, module.getSteer().getAngle());
                     break;

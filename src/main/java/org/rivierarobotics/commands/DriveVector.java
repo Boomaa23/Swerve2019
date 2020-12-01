@@ -23,9 +23,13 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.subsystems.drivetrain.DriveSubmodule;
 import org.rivierarobotics.subsystems.drivetrain.DriveTrain;
 import org.rivierarobotics.subsystems.drivetrain.SwerveData;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorMapped;
+import org.rivierarobotics.util.SimManager;
 
 @GenerateCreator
 public class DriveVector extends InstantCommand {
@@ -44,5 +48,15 @@ public class DriveVector extends InstantCommand {
     public void execute() {
         driveTrain.setAll(SwerveData.ANGLE, MotorMapped.fromDouble(angle));
         driveTrain.setAll(SwerveData.DISTANCE_RELATIVE, MotorMapped.fromDouble(distance));
+    }
+
+    @Override
+    public void end() {
+        if (Robot.isSimulation()) {
+            SimManager.NamedDevice device = SimManager.getDevice("Field2D");
+            device.setValue("x", device.getValue("x").getDouble() + (distance * Math.cos(angle) / DriveSubmodule.TICKS_PER_METER));
+            device.setValue("y", device.getValue("y").getDouble() + (distance * Math.sin(angle) / DriveSubmodule.TICKS_PER_METER));
+            device.setValue("rot", MathUtil.wrapToCircle(device.getValue("rot").getDouble() + Math.toDegrees(angle)));
+        }
     }
 }

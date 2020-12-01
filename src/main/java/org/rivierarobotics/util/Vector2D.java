@@ -33,6 +33,14 @@ public class Vector2D {
         this(0, 0);
     }
 
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
     public double getMagnitude() {
         return Math.sqrt(x * x + y * y);
     }

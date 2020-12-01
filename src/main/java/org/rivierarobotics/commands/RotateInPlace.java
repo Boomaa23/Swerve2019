@@ -23,12 +23,14 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.NavXGyro;
 import org.rivierarobotics.subsystems.drivetrain.DriveTrain;
 import org.rivierarobotics.subsystems.drivetrain.SwerveData;
 import org.rivierarobotics.util.Dimensions;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorMapped;
+import org.rivierarobotics.util.SimManager;
 
 @GenerateCreator
 public class RotateInPlace extends Command {
@@ -60,10 +62,16 @@ public class RotateInPlace extends Command {
     @Override
     protected void end() {
         driveTrain.setAll(SwerveData.POWER, MotorMapped.fromDouble(0), SwerveData.Submodule.DRIVE);
+        if (Robot.isSimulation()) {
+            SimManager.NamedDevice device = SimManager.getDevice("Field2D");
+            device.setValue("rot", targetAngle);
+        }
     }
 
     @Override
     protected boolean isFinished() {
         return Math.abs(gyro.getWrappedAngle() - targetAngle) <= 5;
     }
+
+
 }
