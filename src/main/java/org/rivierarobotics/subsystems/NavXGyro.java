@@ -20,25 +20,34 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import org.rivierarobotics.util.MathUtil;
 
-public class PigeonGyro extends PigeonIMU {
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
+public class NavXGyro {
+    private final AHRS navX;
     private boolean needsOdometryReset = false;
 
-    public PigeonGyro(int id) {
-        super(id);
+    @Inject
+    public NavXGyro() {
+        this.navX = new AHRS(SPI.Port.kMXP);
     }
 
     public double getAngle() {
-        double[] ypr = new double[3];
-        super.getYawPitchRoll(ypr);
-        return ypr[0];
+        return navX.getAngle();
+    }
+
+    public double getRate() {
+        return navX.getRate();
     }
 
     public double getWrappedAngle() {
-        return MathUtil.fitToDegCircle(getAngle());
+        return MathUtil.wrapToCircle(getAngle());
     }
 
     public Rotation2d getRotation2d() {
@@ -47,7 +56,7 @@ public class PigeonGyro extends PigeonIMU {
 
     public void doReset() {
         needsOdometryReset = true;
-        super.setYaw(0);
+        navX.reset();
     }
 
     public boolean requireOdometryReset() {

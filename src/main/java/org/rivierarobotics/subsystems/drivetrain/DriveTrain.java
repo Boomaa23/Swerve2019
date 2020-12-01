@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import org.rivierarobotics.commands.DriveControl;
 import org.rivierarobotics.inject.Corner;
-import org.rivierarobotics.subsystems.PigeonGyro;
+import org.rivierarobotics.subsystems.NavXGyro;
 import org.rivierarobotics.util.ControlDirective;
 import org.rivierarobotics.util.Dimensions;
 import org.rivierarobotics.util.MotorGroup;
@@ -44,7 +44,7 @@ import javax.inject.Singleton;
 @Singleton
 public class DriveTrain extends Subsystem {
     private final Provider<DriveControl> command;
-    private final PigeonGyro gyro;
+    private final NavXGyro gyro;
     private final MotorMapped<SwerveModule> allModules;
     private final SwerveDriveOdometry odometry;
 
@@ -54,7 +54,7 @@ public class DriveTrain extends Subsystem {
                       @Corner(MotorGroup.BL) SwerveModule bl,
                       @Corner(MotorGroup.BR) SwerveModule br,
                       Provider<DriveControl> command,
-                      PigeonGyro gyro) {
+                      NavXGyro gyro) {
         this.command = command;
         this.gyro = gyro;
         this.allModules = new MotorMapped<>();
@@ -191,6 +191,7 @@ public class DriveTrain extends Subsystem {
         SwerveModuleState[] states = new SwerveModuleState[allModules.size()];
         int i = 0;
         for (SwerveModule module : allModules.values()) {
+            module.getDrive().tickPID();
             states[i] = module.getState();
             i++;
         }

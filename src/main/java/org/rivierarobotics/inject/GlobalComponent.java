@@ -26,7 +26,7 @@ import org.rivierarobotics.driver.CompositeJoystick;
 import org.rivierarobotics.driver.ControlsModule;
 import org.rivierarobotics.driver.CurrentControlMode;
 import org.rivierarobotics.inject.CommandComponent.CCModule;
-import org.rivierarobotics.subsystems.PigeonGyro;
+import org.rivierarobotics.subsystems.NavXGyro;
 import org.rivierarobotics.subsystems.SubsystemModule;
 import org.rivierarobotics.subsystems.drivetrain.DriveTrain;
 import org.rivierarobotics.util.RobotShuffleboard;
@@ -49,7 +49,7 @@ public abstract class GlobalComponent {
 
     public abstract DriveTrain getDriveTrain();
 
-    public abstract PigeonGyro getGyro();
+    public abstract NavXGyro getGyro();
 
     @Input.Composite(Input.User.DRIVER)
     public abstract CompositeJoystick getDriverJoystick();

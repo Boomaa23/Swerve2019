@@ -20,35 +20,34 @@
 
 package org.rivierarobotics.subsystems.drivetrain;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel;
 import org.rivierarobotics.util.Dimensions;
 import org.rivierarobotics.util.MotorGroup;
-import org.rivierarobotics.util.MotorUtil;
+import org.rivierarobotics.util.MultiPID;
 import org.rivierarobotics.util.PIDConfig;
 
 public class DriveSubmodule implements SwerveSubmodule {
+    //TODO record ticks per meter
     public static final double TICKS_PER_METER = 1;
-    private static final PIDConfig DRIVE_PID_CONFIG = new PIDConfig(0.0005, 0, 0, 0, 0, 0.5);
-    private final WPI_TalonSRX drive;
+    private final MultiPID pid;
+    private final CANSparkMax drive;
     private final MotorGroup groupId;
 
     public DriveSubmodule(MotorGroup groupId) {
         this.groupId = groupId;
-        this.drive = new WPI_TalonSRX(groupId.driveCANId);
-        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition, DRIVE_PID_CONFIG, 0, drive);
-        drive.setNeutralMode(NeutralMode.Brake);
-        //TODO figure out inverting and sensor phase
+        this.drive = new CANSparkMax(groupId.driveCANId, CANSparkMaxLowLevel.MotorType.kBrushless);
+        this.pid = new MultiPID(new PIDConfig(0.005, 0, 0), new PIDConfig(0.005, 0, 0));
+        //TODO do PID tuning for both pos and vel
     }
 
     public void setPower(double pwr) {
+        pid.selectMode(MultiPID.Mode.NONE);
         setRawPower(pwr);
     }
 
     private void setRawPower(double pwr) {
-        drive.set(ControlMode.PercentOutput, pwr);
+        drive.set(pwr);
     }
 
     public void setRelativeDistance(double meters) {
@@ -56,11 +55,17 @@ public class DriveSubmodule implements SwerveSubmodule {
     }
 
     public void setDistance(double meters) {
-        drive.set(ControlMode.MotionMagic, meters * TICKS_PER_METER);
+        pid.selectMode(MultiPID.Mode.POSITION);
+        pid.setSetpoint(meters * TICKS_PER_METER);
+    }
+
+    public void setVelocity(double metersPerSec) {
+        pid.selectMode(MultiPID.Mode.VELOCITY);
+        pid.setSetpoint(metersPerSec * TICKS_PER_METER);
     }
 
     public int getDistanceTicks() {
-        return drive.getSensorCollection().getPulseWidthPosition();
+        return (int) drive.getEncoder().getPosition();
     }
 
     public double getDistance() {
@@ -72,10 +77,18 @@ public class DriveSubmodule implements SwerveSubmodule {
     }
 
     private double getRPM() {
-        return drive.getSensorCollection().getPulseWidthVelocity();
+        return drive.getEncoder().getVelocity();
     }
 
-    public WPI_TalonSRX getMotor() {
+    public void tickPID() {
+        if (pid.getSelectedMode() == MultiPID.Mode.POSITION) {
+            setRawPower(pid.calculatePos(getDistanceTicks()));
+        } else if (pid.getSelectedMode() == MultiPID.Mode.VELOCITY) {
+            setRawPower(pid.calculateVel(getVelocity()));
+        }
+    }
+
+    public CANSparkMax getMotor() {
         return drive;
     }
 }

@@ -30,8 +30,6 @@ import javax.inject.Singleton;
 
 @Module
 public class SubsystemModule {
-    private static final int PIGEON_ID = 20;
-
     private SubsystemModule() {
     }
 
@@ -61,11 +59,5 @@ public class SubsystemModule {
     @Corner(MotorGroup.BR)
     public static SwerveModule provideBackRightSwerveModule() {
         return new SwerveModule(MotorGroup.BR);
-    }
-
-    @Provides
-    @Singleton
-    public static PigeonGyro providePigeonGyro() {
-        return new PigeonGyro(PIGEON_ID);
     }
 }

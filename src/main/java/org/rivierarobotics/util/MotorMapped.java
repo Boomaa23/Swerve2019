@@ -53,6 +53,6 @@ public class MotorMapped<T> extends LinkedHashMap<MotorGroup, T> {
     public static MotorMapped<Double> fromDouble(double value) {
         Double[] arr = new Double[MotorGroup.values().length];
         Arrays.fill(arr, value);
-        return new MotorMapped<Double>(arr);
+        return new MotorMapped<>(arr);
     }
 }

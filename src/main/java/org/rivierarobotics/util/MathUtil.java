@@ -21,7 +21,8 @@
 package org.rivierarobotics.util;
 
 public class MathUtil {
-    private static final double DEADBAND = 0.1;
+    private static final double DEADBAND = 0.08;
+    private static final double TICKS_PER_DEGREE = 4096.0 / 360;
 
     private MathUtil() {
     }
@@ -31,39 +32,68 @@ public class MathUtil {
     }
 
     public static double fitDeadband(double val, double deadband) {
-        if (!(Math.abs(val) < DEADBAND)) {
+        if (!(Math.abs(val) < deadband)) {
             if (val > 0) {
                 if (val >= 1) {
                     return 1;
                 } else {
-                    return val - DEADBAND;
+                    return val - deadband;
                 }
             } else if (val < 0) {
                 if (val <= -1) {
                     return -1;
                 } else {
-                    return val + DEADBAND;
+                    return val + deadband;
                 }
             }
         }
         return 0;
     }
 
-    public static double fitToDegCircle(double angle) {
-        return angle < 0 ? (360 - (Math.abs(angle) % 360)) : angle % 360;
+    public static double wrapToCircle(double angle) {
+        return wrapToCircle(angle, 360); //default 360 degrees/circle
     }
 
-    public static int moduloPositive(int value, int modulo) {
-        return (value % modulo) + (value < 0 ? modulo : 0);
+    public static double wrapToCircle(double angle, int fullCircle) {
+        angle %= fullCircle;
+        if (angle < 0) {
+            return fullCircle + angle;
+        } else {
+            return angle;
+        }
     }
 
-    public static double fitRange(double value, double minmax) {
-        if (value >= minmax) {
-            return minmax;
-        } else if (value <= -minmax) {
-            return -minmax;
+    public static double limit(double value, double minmax) {
+        return limit(value, -minmax, minmax);
+    }
+
+    public static double limit(double value, double min, double max) {
+        if (value > max) {
+            return max;
+        } else if (value < min) {
+            return min;
         } else {
             return value;
         }
+    }
+
+    public static double degreesToTicks(double degrees) {
+        return degreesToTicks(degrees, TICKS_PER_DEGREE);
+    }
+
+    public static double degreesToTicks(double degrees, double ticksPerDegree) {
+        return degrees * ticksPerDegree;
+    }
+
+    public static double ticksToDegrees(double ticks) {
+        return ticksToDegrees(ticks, 1 / TICKS_PER_DEGREE);
+    }
+
+    public static double ticksToDegrees(double ticks, double degreesPerTick) {
+        return ticks * degreesPerTick;
+    }
+
+    public static boolean isWithinTolerance(double value, double target, double tolerance) {
+        return Math.abs(value - target) < tolerance;
     }
 }

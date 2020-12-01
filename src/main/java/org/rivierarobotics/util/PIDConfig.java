@@ -38,12 +38,11 @@ public class PIDConfig {
     }
 
     public PIDConfig(double kP, double kI, double kD, double kF) {
-        this.kP = kP;
-        this.kI = kI;
-        this.kD = kD;
-        this.kF = kF;
-        this.tolerance = 0;
-        this.pidRange = 1.0;
+        this(kP, kI, kD, kF, 0, 1);
+    }
+
+    public PIDConfig(double kP, double kI, double kD) {
+        this(kP, kI, kD, 0);
     }
 
     public double getP() {

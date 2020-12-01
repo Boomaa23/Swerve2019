@@ -23,7 +23,7 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.PigeonGyro;
+import org.rivierarobotics.subsystems.NavXGyro;
 import org.rivierarobotics.subsystems.drivetrain.DriveTrain;
 import org.rivierarobotics.subsystems.drivetrain.SwerveData;
 import org.rivierarobotics.util.Dimensions;
@@ -33,14 +33,14 @@ import org.rivierarobotics.util.MotorMapped;
 @GenerateCreator
 public class RotateInPlace extends Command {
     private final DriveTrain driveTrain;
-    private final PigeonGyro gyro;
+    private final NavXGyro gyro;
     private final double targetAngle;
     private double pwr = 0.25;
 
-    public RotateInPlace(@Provided DriveTrain driveTrain, @Provided PigeonGyro gyro, double degreesTargetAngle) {
+    public RotateInPlace(@Provided DriveTrain driveTrain, @Provided NavXGyro gyro, double degreesTargetAngle) {
         this.driveTrain = driveTrain;
         this.gyro = gyro;
-        this.targetAngle = MathUtil.fitToDegCircle(degreesTargetAngle);
+        this.targetAngle = MathUtil.wrapToCircle(degreesTargetAngle);
         requires(driveTrain);
     }
 
